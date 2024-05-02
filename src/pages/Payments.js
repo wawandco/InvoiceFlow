@@ -46,15 +46,15 @@ export default function Payments() {
     const listPayments = payments.map((payment) =>
         <tr key={payment.id}>
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <p className="whitespace-no-wrap">{getUserName(payment.user_id)}</p>
+                <p className="font-bold text-black">{getUserName(payment.user_id)}</p>
             </td>
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <p className="whitespace-no-wrap">
+                <p className="text-black">
                     $ <NumericFormat value={payment.total/100} displayType="text" thousandSeparator="," />
                 </p>
             </td>
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <Link to={payment.link} target="_blank">Pay</Link>
+                <Link to={payment.link} className=" bg-green-600 hover:bg-green-400 py-2 px-4 rounded-lg text-white font-bold" target="_blank">Go Pay</Link>
             </td>
         </tr>
     );

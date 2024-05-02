@@ -93,7 +93,7 @@ export default function PricingTable() {
                 </div>
                 <div className="space-y-8 lg:grid lg:grid-cols-3 sm:gap-6 xl:gap-10 lg:space-y-0">
                     {products.map(product => (
-                        <div key={product.id} className="flex flex-col p-6 mx-auto text-center rounded-lg border border-gray-100 shadow">
+                        <div key={product.id} className="flex flex-col justify-between p-6 mx-auto text-center rounded-lg border border-gray-100 shadow">
                             <h3 className="mb-4 text-2xl font-semibold">{product.name}</h3>
                             <p className="font-light text-gray-500 sm:text-lg">{product.description}</p>
                             <div className="flex justify-center items-baseline my-8">

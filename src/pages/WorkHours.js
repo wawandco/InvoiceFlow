@@ -107,20 +107,20 @@ export default function WorkHours() {
 
     const listUsers = usersHours.map((uwk) =>
         <tr key={uwk.id}>
-            <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
+            {/* <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
                 <p className="whitespace-no-wrap">{uwk.id}</p>
+            </td> */}
+            <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
+                <p className="font-bold text-black">{getUserName(uwk.user_id)}</p>
             </td>
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <p className="whitespace-no-wrap">{getUserName(uwk.user_id)}</p>
+                <p className="text-black">{uwk.hours}</p>
             </td>
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <p className="whitespace-no-wrap">{uwk.hours}</p>
+                <p className="text-black">$ {uwk.hourly_price}</p>
             </td>
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <p className="whitespace-no-wrap">$ {uwk.hourly_price}</p>
-            </td>
-            <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <p className="whitespace-no-wrap">
+                <p className="text-black">
                     $ <NumericFormat value={Math.round((uwk.hours * uwk.hourly_price) * 100)/100} displayType="text" thousandSeparator="," />
                 </p>
             </td>
@@ -185,7 +185,7 @@ export default function WorkHours() {
                     <table className="w-full">
                         <thead>
                             <tr className="bg-[#3d52a0] text-left text-xs font-semibold uppercase tracking-widest text-white">
-                                <th className="px-5 py-3">ID</th>
+                                {/* <th className="px-5 py-3">ID</th> */}
                                 <th className="px-5 py-3">User</th>
                                 <th className="px-5 py-3">Hours</th>
                                 <th className="px-5 py-3">Price</th>

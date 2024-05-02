@@ -40,19 +40,19 @@ export default function Users() {
     const listUsers = users.map((user) =>
         <tr key={user.id}>
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <p className="whitespace-no-wrap">{user.id}</p>
+                <p className="text-black">{user.id}</p>
             </td>
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <p className="whitespace-no-wrap">{user.full_name}</p>
+                <p className="text-black font-bold">{user.full_name}</p>
             </td>
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <p className="whitespace-no-wrap">Administrator</p>
+                <p className="text-black">N/A</p>
             </td>
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <p className="whitespace-no-wrap">{Moment(user.created_at).format('MMMM DD, YYYY')}</p>
+                <p className="text-black">{Moment(user.created_at).format('MMMM DD, YYYY')}</p>
             </td>
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <span className="rounded-full bg-green-200 px-3 py-1 text-xs font-semibold text-green-900">Active</span>
+                <span className="rounded-full bg-green-200 px-3 py-1 text-xs font-semibold text-green-900">N/A</span>
             </td>
         </tr>
     );
