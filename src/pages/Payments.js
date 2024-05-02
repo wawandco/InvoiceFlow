@@ -10,6 +10,7 @@ export default function Payments() {
     const { user, isAuthenticated } = useContext(DataContext);
     const [userId, setUserId] = useState("");
     const [payments, setPayments] = useState([]);
+    const [users, setUsers] = useState([]);
 
     useEffect(() => {
         var uId = ""
@@ -22,6 +23,7 @@ export default function Payments() {
 
     useEffect(() => {
         getPayments();
+        getUsers();
     }, [userId]);
 
     async function getPayments() {
@@ -35,14 +37,24 @@ export default function Payments() {
         }
     }
 
+    async function getUsers() {
+        if (userId !== "") {
+            const { data } = await supabase.from("users").select().eq('auth0_user_id', userId);
+            setUsers(data);
+        }
+    }
+
     function getUserName(userId) {
-        // supabase.from("users").select().eq('id', userId).single().then((response) => {
-        //     console.log(response.data[0].full_name);
-        //     if (response.data.length > 0) {
-        //         return response.data[0].full_name
-        //     }
-        // })
-        return "In Progress ... " + userId
+        var userName = "N/A"
+
+        users.forEach(function (user) {
+            if (user.id === userId) {
+                userName = user.full_name
+                return
+            }
+        });
+
+        return userName
     }
 
     console.log("PAYMENTS", payments);

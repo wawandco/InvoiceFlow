@@ -78,7 +78,7 @@ export default function WorkHours({ customerId }) {
                         product_data: {
                             name: 'T-shirt',
                         },
-                        unit_amount: Math.round(( formData.hours * formData.hourly_price ) * 100),
+                        unit_amount: Math.round((formData.hours * formData.hourly_price) * 100),
                     },
                     quantity: 1,
                 },
@@ -104,21 +104,24 @@ export default function WorkHours({ customerId }) {
         }
     }
 
+    async function getUsers() {
+        if (userId !== "") {
+            const { data } = await supabase.from("users").select().eq('auth0_user_id', userId);
+            setUsers(data);
+        }
+    }
+
     function getUserName(userId) {
-        // console.log(userId);
-        supabase.from("users").select().eq('id', userId).single().then((response) => {
-            console.log(response.data.full_name);
-            return response.data.full_name
-            // if (response.data.length > 0) {
-            //     return response.data[0].full_name
-            // }
-        })
-        return "In Progress ... " + userId
+        var userName = "N/A"
 
-        // const {data} = await supabase.from("users").select().eq('id', userId).single()
-        // console.log(data);
+        users.forEach(function (user) {
+            if (user.id === userId) {
+                userName = user.full_name
+                return
+            }
+        });
 
-        // return data.data.full_name
+        return userName
     }
 
     const listUsers = usersHours.map((userHours) =>
