@@ -1,27 +1,13 @@
-import darkLogo from '../assets/images/logodark.png';
-
-import React, { useState, useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
-
+import { useState } from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
 
-import Loading from "../components/Loading";
+import darkLogo from '../assets/images/logodark.png';
 
-const Signup = ({ isSubscribed }) => {
+const Signup = () => {
+    const { loginWithRedirect } = useAuth0();
+
     const [formData, setFormData] = useState({ fullName: "", email: "", password: "" })
     const [error, setError] = useState(false)
-    const { isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
-
-    useEffect(() => {
-        console.log(error);
-    });
-
-    if (isLoading) {
-        return <Loading></Loading>
-    }
-    if (isAuthenticated) {
-        return <Navigate to="/" />
-    }
 
     const handleSubmit = (e) => {
         e.preventDefault()

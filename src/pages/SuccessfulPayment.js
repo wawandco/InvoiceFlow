@@ -1,5 +1,4 @@
-
-const SuccessfulPayment = ({ isSubscribed }) => {
+const SuccessfulPayment = () => {
     return (
         <>
             <div className="h-screen flex flex-col items-center justify-center">

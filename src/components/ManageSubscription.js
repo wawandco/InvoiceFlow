@@ -1,25 +1,28 @@
+import { useState, useContext } from 'react';
 import Stripe from "stripe";
-import React, { useState } from 'react';
+import { DataContext } from "../components/DataProvider";
 
-export default function ManageSubscription({ isSubscribed, customerId }) {
-    const STRIPE_SK_KEY = "sk_test_51P6CocDuGS5xH1gVNC6ZqSv0ILh9XhRbtnJXyOTOEHUE48YpEKVKnzVPSr4kC8Xeuy22AZDaVphPRmnTslPTqRaD00izS7Lccg"
+const STRIPE_SECRET_KEY = process.env.REACT_APP_STRIPE_SECRET_KEY
+
+export default function ManageSubscription() {
+    const { user, isSubscribed } = useContext(DataContext);
     const [customerSubscriptions, setCustomerSubscriptions] = useState({})
 
     const handleManageSubscription = async () => {
-        const stripe = Stripe(STRIPE_SK_KEY);
+        const stripe = Stripe(STRIPE_SECRET_KEY);
 
         const session = await stripe.billingPortal.sessions.create({
-            customer: customerId,
+            customer: user.stripe_customer_id,
             return_url: `${window.location.origin}/profile`,
         });
         window.location.href = session.url
     }
 
     const getSubscriptionInfo = async () => {
-        const stripe = Stripe(STRIPE_SK_KEY);
+        const stripe = Stripe(STRIPE_SECRET_KEY);
 
         const subscriptions = await stripe.subscriptions.list({
-            customer: customerId,
+            customer: user.stripe_customer_id,
             status: "active",
         })
 

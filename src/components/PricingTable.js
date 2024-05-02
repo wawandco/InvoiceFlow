@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
-import { loadStripe } from "@stripe/stripe-js";
+import { useState, useContext } from 'react';
 import Stripe from "stripe";
+import { loadStripe } from "@stripe/stripe-js";
+import { DataContext } from "../components/DataProvider";
 
-export default function PricingTable({ customerId }) {
-    const STRIPE_SK_KEY = "sk_test_51P6CocDuGS5xH1gVNC6ZqSv0ILh9XhRbtnJXyOTOEHUE48YpEKVKnzVPSr4kC8Xeuy22AZDaVphPRmnTslPTqRaD00izS7Lccg"
-    const STRIPE_PK_KEY = "pk_test_51P6CocDuGS5xH1gVlXTr0Zyg5yqu5X2bWoH4aTRXGU1VeCTZ078UuFx0eQgYQDlRi7vgR8PE0n6m4AIdvmZjelX200jAwyHr7L"
+const STRIPE_SECRET_KEY = process.env.REACT_APP_STRIPE_SECRET_KEY
+const STRIPE_PUBLISHABLE_KEY = process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY
+
+export default function PricingTable() {
+    const { user } = useContext(DataContext);
     const [products, setProducts] = useState([])
     // const [cusSession, setCusSession] = useState({})
 
@@ -26,19 +29,19 @@ export default function PricingTable({ customerId }) {
     // }
     // createCustomerSession();
 
-    const handleCheckout = async (customerId, priceId) => {
-        const stripeSk = Stripe(STRIPE_SK_KEY);
-        const stripePk = await loadStripe(STRIPE_PK_KEY);
+    const handleCheckout = async (priceId) => {
+        const stripeSk = Stripe(STRIPE_SECRET_KEY);
+        const stripePk = await loadStripe(STRIPE_PUBLISHABLE_KEY);
 
         const session = await stripeSk.checkout.sessions.create({
-            customer: customerId,
+            customer: user.stripe_customer_id,
             payment_method_types: ['card'],
             line_items: [
                 { price: priceId, quantity: 1 },
             ],
             mode: 'subscription',
             success_url: `${window.location.origin}/successful-payment`,
-            cancel_url: `${window.location.origin}/billing`,
+            cancel_url: `${window.location.origin}/pricing`,
         });
 
         const { error } = await stripePk.redirectToCheckout({ sessionId: session.id })
@@ -48,7 +51,7 @@ export default function PricingTable({ customerId }) {
     }
 
     const getPrices = async () => {
-        const stripe = Stripe(STRIPE_SK_KEY);
+        const stripe = Stripe(STRIPE_SECRET_KEY);
         const prices = await stripe.prices.list();
 
         var p = []
@@ -97,7 +100,7 @@ export default function PricingTable({ customerId }) {
                                 <span className="mr-2 text-5xl font-extrabold">$ {product.amount}</span>
                                 <span className="text-gray-500 dark:text-gray-400">/month</span>
                             </div>
-                            <button onClick={() => { handleCheckout(customerId, product.priceId) }} className="text-white bg-[#3D52A0] text-lg rounded-lg px-5 py-2.5">Subscribe</button>
+                            <button onClick={() => { handleCheckout(product.priceId) }} className="text-white bg-[#3D52A0] text-lg rounded-lg px-5 py-2.5">Subscribe</button>
                         </div>
                     ))}
                 </div>

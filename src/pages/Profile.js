@@ -1,19 +1,14 @@
-import React from "react";
+import { useContext } from "react";
 
-import { useAuth0 } from "@auth0/auth0-react";
-import Dashbboard from "../components/Dashboard";
-import Loading from "../components/Loading";
+import { DataContext } from "../components/DataProvider";
+import Dashboard from "../components/Dashboard";
 import ManageSubscription from "../components/ManageSubscription";
 
-const Profile = ({ isSubscribed }) => {
-  const { user, isAuthenticated, isLoading } = useAuth0();
-
-  if (isLoading) {
-    return <Loading></Loading>
-  }
+const Profile = () => {
+  const { user, isAuthenticated } = useContext(DataContext);
 
   return (
-    <Dashbboard isAuthenticated={isAuthenticated} activeTab="profile" isSubscribed={isSubscribed} >
+    <Dashboard activeTab="profile">
       {isAuthenticated &&
         <div className="flex flex-row min-h-[calc(100vh-100px)] justify-center items-center">
           <div className="flex flex-col justify-center max-w-lg p-6 shadow-md rounded-xl sm:px-12 dark:bg-gray-50 dark:text-gray-800">
@@ -47,11 +42,10 @@ const Profile = ({ isSubscribed }) => {
               </div>
             </div>
           </div>
-          <ManageSubscription isSubscribed={isSubscribed} customerId={user.stripe_customer_id} />
+          <ManageSubscription/>
         </div>
       }
-      {/* <Link to="/">Back</Link> */}
-    </Dashbboard>
+    </Dashboard>
   );
 };
 
