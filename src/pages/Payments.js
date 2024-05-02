@@ -25,8 +25,8 @@ export default function Payments() {
     }, [userId]);
 
     async function getPayments() {
-        if (userId != "") {
-            const { data: client, error } = await supabase.from("clients").select().eq('auth0_user_id', userId).single();
+        if (userId !== "") {
+            const { error } = await supabase.from("clients").select().eq('auth0_user_id', userId).single();
 
             if (error == null) {
                 const { data: clientPayments } = await supabase.from("clients_payments").select().eq('client_id', userId);

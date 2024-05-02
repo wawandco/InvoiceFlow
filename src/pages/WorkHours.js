@@ -30,14 +30,14 @@ export default function WorkHours({ customerId }) {
     }, [userId, formData]);
 
     async function getUsers() {
-        if (userId != "") {
+        if (userId !== "") {
             const { data } = await supabase.from("users").select().eq('auth0_user_id', userId);
             setUsers(data);
         }
     }
 
     async function getUsersWorkHours() {
-        if (userId != "") {
+        if (userId !== "") {
             const { data } = await supabase.from("users_hours").select().eq('client_id', userId);
             setUsersHours(data);
         }
@@ -56,7 +56,7 @@ export default function WorkHours({ customerId }) {
                 year: 2024
             }).select().single();
 
-        if (error != null) {
+        if (error !== null) {
             console.error(`ERROR on work hours INSERT: ${error.message}`);
         }
 
@@ -99,7 +99,7 @@ export default function WorkHours({ customerId }) {
                 link: session.url,
             });
 
-        if (error != null) {
+        if (error !== null) {
             console.error(`ERROR on payment INSERT: ${error.message}`);
         }
     }

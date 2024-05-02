@@ -25,7 +25,7 @@ export default function Users() {
     }, [userId, formData]);
 
     async function getUsers() {
-        if (userId != "") {
+        if (userId !== "") {
             console.log(userId);
             const { data } = await supabase.from("users").select().eq('auth0_user_id', userId);
             setUsers(data);
