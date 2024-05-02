@@ -7,40 +7,26 @@ import Dashboard from "../components/Dashboard";
 import { supabase } from "../lib/supabase";
 
 export default function Payments() {
-    const { user, isAuthenticated } = useContext(DataContext);
-    const [userId, setUserId] = useState("");
+    const { client } = useContext(DataContext);
     const [payments, setPayments] = useState([]);
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
-        var uId = ""
-        if (isAuthenticated) {
-            uId = user.sub
-        }
-
-        setUserId(uId);
-    }, [user]);
-
-    useEffect(() => {
-        getPayments();
         getUsers();
-    }, [userId]);
+        getPayments();
+    }, [client]);
 
-    async function getPayments() {
-        if (userId !== "") {
-            const { error } = await supabase.from("clients").select().eq('auth0_user_id', userId).single();
-
-            if (error == null) {
-                const { data: clientPayments } = await supabase.from("clients_payments").select().eq('client_id', userId);
-                setPayments(clientPayments);
-            }
+    async function getUsers() {
+        if (client.id !== undefined) {
+            const { data } = await supabase.from("users").select().eq('client_id', client.id);
+            setUsers(data);
         }
     }
 
-    async function getUsers() {
-        if (userId !== "") {
-            const { data } = await supabase.from("users").select().eq('auth0_user_id', userId);
-            setUsers(data);
+    async function getPayments() {
+        if (client.id !== undefined) {
+            const { data } = await supabase.from("client_payments").select().eq('client_id', client.id);
+            setPayments(data);
         }
     }
 
@@ -57,8 +43,6 @@ export default function Payments() {
         return userName
     }
 
-    console.log("PAYMENTS", payments);
-
     const listPayments = payments.map((payment) =>
         <tr key={payment.id}>
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
@@ -66,7 +50,7 @@ export default function Payments() {
             </td>
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
                 <p className="whitespace-no-wrap">
-                    $ <NumericFormat value={payment.total} displayType="text" thousandSeparator="," />
+                    $ <NumericFormat value={payment.total/100} displayType="text" thousandSeparator="," />
                 </p>
             </td>
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">

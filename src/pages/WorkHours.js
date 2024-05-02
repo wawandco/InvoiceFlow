@@ -8,37 +8,27 @@ import { supabase } from "../lib/supabase";
 
 const STRIPE_SECRET_KEY = process.env.REACT_APP_STRIPE_SECRET_KEY
 
-export default function WorkHours({ customerId }) {
-    const { user, isAuthenticated } = useContext(DataContext);
-    const [formData, setFormData] = useState({ userId: "", hours: 0, hourly_price: 0.0 })
-    const [userId, setUserId] = useState("");
+export default function WorkHours() {
+    const { client } = useContext(DataContext);
+    const [formData, setFormData] = useState({ user_id: "", hours: 0, hourly_price: 0.0 })
     const [users, setUsers] = useState([]);
     const [usersHours, setUsersHours] = useState([]);
 
     useEffect(() => {
-        var userId = ""
-        if (isAuthenticated) {
-            userId = user.sub
-        }
-
-        setUserId(userId);
-    }, [user]);
-
-    useEffect(() => {
         getUsers();
         getUsersWorkHours();
-    }, [userId, formData]);
+    }, [client, formData]);
 
     async function getUsers() {
-        if (userId !== "") {
-            const { data } = await supabase.from("users").select().eq('auth0_user_id', userId);
+        if (client.id !== undefined) {
+            const { data } = await supabase.from("users").select().eq('client_id', client.id);
             setUsers(data);
         }
     }
 
     async function getUsersWorkHours() {
-        if (userId !== "") {
-            const { data } = await supabase.from("users_hours").select().eq('client_id', userId);
+        if (client.id !== undefined) {
+            const { data } = await supabase.from("user_work_hours").select().eq('client_id', client.id);
             setUsersHours(data);
         }
     }
@@ -46,10 +36,10 @@ export default function WorkHours({ customerId }) {
     async function createUserWorkHours(e) {
         e.preventDefault()
 
-        const { data, error } = await supabase.from('users_hours')
+        const { data, error } = await supabase.from('user_work_hours')
             .insert({
-                user_id: formData.userId,
-                client_id: userId,
+                client_id: client.id,
+                user_id: formData.user_id,
                 hours: formData.hours,
                 hourly_price: formData.hourly_price,
                 month: 4,
@@ -57,26 +47,26 @@ export default function WorkHours({ customerId }) {
             }).select().single();
 
         if (error !== null) {
-            console.error(`ERROR on work hours INSERT: ${error.message}`);
+            console.error(`ERROR creating user work hours: ${error.message}`);
         }
 
-        createPaymentLink(formData, userId, data.id);
+        createPaymentLink(formData, data.id);
 
-        setFormData({ ...formData, userId: "", hours: 0, hourly_price: 0.0 })
+        setFormData({ ...formData, user_id: "", hours: 0, hourly_price: 0.0 })
     }
 
-    async function createPaymentLink(formData, userId, userHourId) {
+    async function createPaymentLink(formData, userWorkHourId) {
         const stripe = Stripe(STRIPE_SECRET_KEY);
 
         const session = await stripe.checkout.sessions.create({
-            customer: customerId,
+            customer: client.stripe_customer_id,
             payment_method_types: ['card'],
             line_items: [
                 {
                     price_data: {
                         currency: 'usd',
                         product_data: {
-                            name: 'T-shirt',
+                            name: `Payment for ${getUserName(formData.user_id)}`,
                         },
                         unit_amount: Math.round((formData.hours * formData.hourly_price) * 100),
                     },
@@ -87,27 +77,18 @@ export default function WorkHours({ customerId }) {
             success_url: `${window.location.origin}/successful-payment`,
             cancel_url: `${window.location.origin}/work-hours`,
         });
-        console.log("session: ", session);
 
-
-        const { error } = await supabase.from('clients_payments')
+        const { error } = await supabase.from('client_payments')
             .insert({
-                user_id: formData.userId,
-                client_id: userId,
-                user_hour_id: userHourId,
-                total: (formData.hours * formData.hourly_price),
+                client_id: client.id,
+                user_id: formData.user_id,
+                user_work_hours_id: userWorkHourId,
+                total: Math.round((formData.hours * formData.hourly_price) * 100),
                 link: session.url,
             });
 
         if (error !== null) {
-            console.error(`ERROR on payment INSERT: ${error.message}`);
-        }
-    }
-
-    async function getUsers() {
-        if (userId !== "") {
-            const { data } = await supabase.from("users").select().eq('auth0_user_id', userId);
-            setUsers(data);
+            console.error(`ERROR creating payment: ${error.message}`);
         }
     }
 
@@ -124,23 +105,23 @@ export default function WorkHours({ customerId }) {
         return userName
     }
 
-    const listUsers = usersHours.map((userHours) =>
-        <tr key={userHours.id}>
+    const listUsers = usersHours.map((uwk) =>
+        <tr key={uwk.id}>
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <p className="whitespace-no-wrap">{userHours.id}</p>
+                <p className="whitespace-no-wrap">{uwk.id}</p>
             </td>
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <p className="whitespace-no-wrap">{getUserName(userHours.user_id)}</p>
+                <p className="whitespace-no-wrap">{getUserName(uwk.user_id)}</p>
             </td>
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <p className="whitespace-no-wrap">{userHours.hours}</p>
+                <p className="whitespace-no-wrap">{uwk.hours}</p>
             </td>
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <p className="whitespace-no-wrap">$ {userHours.hourly_price}</p>
+                <p className="whitespace-no-wrap">$ {uwk.hourly_price}</p>
             </td>
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
                 <p className="whitespace-no-wrap">
-                    $ <NumericFormat value={userHours.hours * userHours.hourly_price} displayType="text" thousandSeparator="," />
+                    $ <NumericFormat value={Math.round((uwk.hours * uwk.hourly_price) * 100)/100} displayType="text" thousandSeparator="," />
                 </p>
             </td>
         </tr>
@@ -149,7 +130,6 @@ export default function WorkHours({ customerId }) {
     return (
         <>
             <Dashboard activeTab="workHours">
-                <button onClick={createPaymentLink}>Test</button>
                 <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
                     <h1 className="font-bold mb-4">Create User</h1>
 
@@ -163,7 +143,7 @@ export default function WorkHours({ customerId }) {
                                         </label>
                                     </div>
                                     <div className="w-3/5">
-                                        <select onChange={e => setFormData({ ...formData, userId: e.target.value })}>
+                                        <select onChange={e => setFormData({ ...formData, user_id: e.target.value })}>
                                             <option value="" > Select a user </option>
                                             {users.map(user => (
                                                 <option key={user.id} value={user.id} > {user.full_name} </option>

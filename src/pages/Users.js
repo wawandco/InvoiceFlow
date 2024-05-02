@@ -6,28 +6,17 @@ import Dashboard from "../components/Dashboard";
 import { supabase } from "../lib/supabase"
 
 export default function Users() {
-    const { user, isAuthenticated } = useContext(DataContext);
-    const [formData, setFormData] = useState({ fullName: "" })
-    const [userId, setUserId] = useState("");
+    const { client } = useContext(DataContext);
+    const [formData, setFormData] = useState({ full_name: "" })
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
-        var userId = ""
-        if (isAuthenticated) {
-            userId = user.sub
-        }
-
-        setUserId(userId);
-    }, [user]);
-
-    useEffect(() => {
         getUsers();
-    }, [userId, formData]);
+    }, [client, formData]);
 
     async function getUsers() {
-        if (userId !== "") {
-            console.log(userId);
-            const { data } = await supabase.from("users").select().eq('auth0_user_id', userId);
+        if (client.id !== undefined) {
+            const { data } = await supabase.from("users").select().eq('client_id', client.id);
             setUsers(data);
         }
     }
@@ -36,13 +25,16 @@ export default function Users() {
         e.preventDefault()
 
         const { error } = await supabase.from('users')
-            .insert({ full_name: formData.fullName, auth0_user_id: userId });
+            .insert({
+                client_id: client.id,
+                full_name: formData.full_name
+            });
 
         if (error != null) {
-            console.error(`ERROR on user INSERT: ${error.message}`);
+            console.error(`ERROR creating user: ${error.message}`);
         }
 
-        setFormData({ ...formData, fullName: "" })
+        setFormData({ ...formData, full_name: "" })
     }
 
     const listUsers = users.map((user) =>
@@ -80,7 +72,7 @@ export default function Users() {
                                     </label>
                                 </div>
                                 <div className="md:w-3/4">
-                                    <input value={formData.fullName} onChange={(e) => setFormData({ ...formData, fullName: e.target.value })} className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#3D52A0]/80 sm:text-sm sm:leading-6 p-2" type="text" />
+                                    <input value={formData.full_name} onChange={(e) => setFormData({ ...formData, full_name: e.target.value })} className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#3D52A0]/80 sm:text-sm sm:leading-6 p-2" type="text" />
                                 </div>
                             </div>
                             <div className="flex justify-end">
