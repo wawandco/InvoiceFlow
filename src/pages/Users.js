@@ -1,4 +1,5 @@
 import { useEffect, useState, useContext } from "react";
+import { Link } from 'react-router-dom';
 import Moment from 'moment';
 
 import { DataContext } from "../components/DataProvider";
@@ -39,11 +40,12 @@ export default function Users() {
 
     const listUsers = users.map((user) =>
         <tr key={user.id}>
-            <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
+            {/* <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
                 <p className="text-black">{user.id}</p>
-            </td>
+            </td> */}
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <p className="text-black font-bold">{user.full_name}</p>
+                <Link to={("/user/") + user.id} className="text-black font-bold" target="_blank">{user.full_name}</Link>
+                {/* <p className="text-black font-bold">{user.full_name}</p> */}
             </td>
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
                 <p className="text-black">N/A</p>
@@ -88,7 +90,7 @@ export default function Users() {
                     <table className="w-full">
                         <thead>
                             <tr className="bg-[#3d52a0] text-left text-xs font-semibold uppercase tracking-widest text-white">
-                                <th className="px-5 py-3">ID</th>
+                                {/* <th className="px-5 py-3">ID</th> */}
                                 <th className="px-5 py-3">Full Name</th>
                                 <th className="px-5 py-3">User Role</th>
                                 <th className="px-5 py-3">Created at</th>

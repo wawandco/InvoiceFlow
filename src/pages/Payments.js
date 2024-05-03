@@ -46,7 +46,8 @@ export default function Payments() {
     const listPayments = payments.map((payment) =>
         <tr key={payment.id}>
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <p className="font-bold text-black">{getUserName(payment.user_id)}</p>
+            <Link to={("/user/") + payment.user_id} className="text-black font-bold" target="_blank">{getUserName(payment.user_id)}</Link>
+                {/* <p className="font-bold text-black">{getUserName(payment.user_id)}</p> */}
             </td>
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
                 <p className="text-black">

@@ -1,4 +1,5 @@
 import { useEffect, useState, useContext } from "react";
+import { Link } from 'react-router-dom';
 import { NumericFormat } from 'react-number-format';
 import Stripe from "stripe";
 
@@ -111,7 +112,8 @@ export default function WorkHours() {
                 <p className="whitespace-no-wrap">{uwk.id}</p>
             </td> */}
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <p className="font-bold text-black">{getUserName(uwk.user_id)}</p>
+                <Link to={("/user/") + uwk.user_id} className="text-black font-bold" target="_blank">{getUserName(uwk.user_id)}</Link>
+                {/* <p className="font-bold text-black">{getUserName(uwk.user_id)}</p> */}
             </td>
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
                 <p className="text-black">{uwk.hours}</p>
@@ -121,7 +123,7 @@ export default function WorkHours() {
             </td>
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
                 <p className="text-black">
-                    $ <NumericFormat value={Math.round((uwk.hours * uwk.hourly_price) * 100)/100} displayType="text" thousandSeparator="," />
+                    $ <NumericFormat value={Math.round((uwk.hours * uwk.hourly_price) * 100) / 100} displayType="text" thousandSeparator="," />
                 </p>
             </td>
         </tr>

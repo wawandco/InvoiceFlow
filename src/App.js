@@ -12,6 +12,7 @@ import WorkHours from './pages/WorkHours';
 import Users from './pages/Users';
 import Payments from './pages/Payments';
 import DataProvider from './components/DataProvider';
+import User from './pages/User';
 
 export default function App() {
   const { user } = useAuth0();
@@ -21,6 +22,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home/>} />
         <Route path="/users" element={<Users/>} />
+        <Route path="/user/:user_id" element={<User/>} />
         <Route path="/work-hours" element={<WorkHours customerId={user && user.stripe_customer_id} />} />
         <Route path="/payments" element={<Payments/>} />
         <Route path="/profile" element={<Profile/>} />
