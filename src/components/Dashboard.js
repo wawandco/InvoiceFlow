@@ -8,18 +8,18 @@ import LoginButton from '../components/LoginButton';
 import LogoutButton from '../components/LogoutButton';
 
 export default function Dashboard({ activeTab, children }) {
-    const { isAuthenticated, isSubscribed } = useContext(DataContext);
+    const { client, isAuthenticated, isSubscribed } = useContext(DataContext);
 
     return (
         <>
             <nav className="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-[#3D52A0] dark:border-[#3D52A0]-700">
                 <div className="px-3 py-3 lg:px-5 lg:pl-3">
                     <div className="flex items-center justify-between">
-                        <div className="flex items-center justify-center rtl:justify-end">
-                            <a href="/" className="flex ms-2 md:me-24">
+                        <div>
+                            <a href="/" className="flex items-center ms-2 md:me-24">
                                 <img src={logo} className="h-8 me-3 hidden dark:inline" alt="InvoiceFlow Logo" />
                                 <img src={darkLogo} className="h-8 me-3 inline dark:hidden" alt="InvoiceFlow Logo" />
-                                <h1 className="font-bold dark:text-white"> - Che Che</h1>
+                                <h1 className="font-bold dark:text-white"> - {client.name}'s Company</h1>
                             </a>
                         </div>
 
