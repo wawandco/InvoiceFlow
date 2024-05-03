@@ -1,27 +1,17 @@
 import { useEffect, useState, useContext } from "react";
-import { NumericFormat } from 'react-number-format';
-import { Link } from 'react-router-dom';
 
 import { DataContext } from "../components/DataProvider";
 import Dashboard from "../components/Dashboard";
+import PaymentTable from "../components/PaymentTable";
 import { supabase } from "../lib/supabase";
 
 export default function Payments() {
     const { client } = useContext(DataContext);
     const [payments, setPayments] = useState([]);
-    const [users, setUsers] = useState([]);
 
     useEffect(() => {
-        getUsers();
         getPayments();
     }, [client]);
-
-    async function getUsers() {
-        if (client.id !== undefined) {
-            const { data } = await supabase.from("users").select().eq('client_id', client.id);
-            setUsers(data);
-        }
-    }
 
     async function getPayments() {
         if (client.id !== undefined) {
@@ -30,34 +20,8 @@ export default function Payments() {
         }
     }
 
-    function getUserName(userId) {
-        var userName = "N/A"
-
-        users.forEach(function (user) {
-            if (user.id === userId) {
-                userName = user.full_name
-                return
-            }
-        });
-
-        return userName
-    }
-
     const listPayments = payments.map((payment) =>
-        <tr key={payment.id}>
-            <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-            <Link to={("/user/") + payment.user_id} className="text-black font-bold" target="_blank">{getUserName(payment.user_id)}</Link>
-                {/* <p className="font-bold text-black">{getUserName(payment.user_id)}</p> */}
-            </td>
-            <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <p className="text-black">
-                    $ <NumericFormat value={payment.total/100} displayType="text" thousandSeparator="," />
-                </p>
-            </td>
-            <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <Link to={payment.link} className=" bg-green-600 hover:bg-green-400 py-2 px-4 rounded-lg text-white font-bold" target="_blank">Go Pay</Link>
-            </td>
-        </tr>
+        <PaymentTable key={payment.id} payment={payment} />
     );
 
     return (
@@ -71,6 +35,7 @@ export default function Payments() {
                             <th className="px-5 py-3">User</th>
                             <th className="px-5 py-3">Total</th>
                             <th className="px-5 py-3">Link</th>
+                            <th className="px-5 py-3">Status</th>
                         </tr>
                     </thead>
                     <tbody className="text-gray-500">

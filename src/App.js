@@ -8,7 +8,7 @@ import Profile from './pages/Profile';
 import Signup from './pages/Signup';
 import Pricing from './pages/Pricing';
 import SuccessfulPayment from './pages/SuccessfulPayment';
-import WorkHours from './pages/WorkHours';
+import UserWorkHours from './pages/UserWorkHours';
 import Users from './pages/Users';
 import Payments from './pages/Payments';
 import DataProvider from './components/DataProvider';
@@ -20,11 +20,11 @@ export default function App() {
   return (
     <DataProvider>
       <Routes>
-        <Route path="/" element={<Home/>} />
+        {/* <Route path="/" element={<Home/>} /> */}
         <Route path="/users" element={<Users/>} />
         <Route path="/user/:user_id" element={<User/>} />
-        <Route path="/work-hours" element={<WorkHours customerId={user && user.stripe_customer_id} />} />
-        <Route path="/payments" element={<Payments/>} />
+        <Route path="/work-hours" element={<UserWorkHours customerId={user && user.stripe_customer_id} />} />
+        <Route index path="/" element={<Payments/>} />
         <Route path="/profile" element={<Profile/>} />
         <Route path="/signup" element={<Signup/>} />
         <Route path="/pricing" element={<Pricing/>} />

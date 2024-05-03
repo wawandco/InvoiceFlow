@@ -1,15 +1,14 @@
 import { useEffect, useState, useContext } from "react";
-import { Link } from 'react-router-dom';
-import { NumericFormat } from 'react-number-format';
 import Stripe from "stripe";
 
 import { DataContext } from "../components/DataProvider";
 import Dashboard from "../components/Dashboard";
 import { supabase } from "../lib/supabase";
+import UserWorkHoursTable from "../components/UserWorkHoursTable";
 
 const STRIPE_SECRET_KEY = process.env.REACT_APP_STRIPE_SECRET_KEY
 
-export default function WorkHours() {
+export default function UserWorkHours() {
     const { client } = useContext(DataContext);
     const [formData, setFormData] = useState({ user_id: "", hours: 0, hourly_price: 0.0 })
     const [users, setUsers] = useState([]);
@@ -57,6 +56,7 @@ export default function WorkHours() {
     }
 
     async function createPaymentLink(formData, userWorkHourId) {
+        // const currentDate = new Date();
         const stripe = Stripe(STRIPE_SECRET_KEY);
 
         const session = await stripe.checkout.sessions.create({
@@ -77,6 +77,7 @@ export default function WorkHours() {
             mode: 'payment',
             success_url: `${window.location.origin}/successful-payment`,
             cancel_url: `${window.location.origin}/work-hours`,
+            // expires_at: Math.floor(Date.now() / 1000) + 3200,  // Configured to expire after 30 minutes
         });
 
         const { error } = await supabase.from('client_payments')
@@ -85,6 +86,7 @@ export default function WorkHours() {
                 user_id: formData.user_id,
                 user_work_hours_id: userWorkHourId,
                 total: Math.round((formData.hours * formData.hourly_price) * 100),
+                session_id: session.id,
                 link: session.url,
             });
 
@@ -107,26 +109,7 @@ export default function WorkHours() {
     }
 
     const listUsers = usersHours.map((uwk) =>
-        <tr key={uwk.id}>
-            {/* <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <p className="whitespace-no-wrap">{uwk.id}</p>
-            </td> */}
-            <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <Link to={("/user/") + uwk.user_id} className="text-black font-bold" target="_blank">{getUserName(uwk.user_id)}</Link>
-                {/* <p className="font-bold text-black">{getUserName(uwk.user_id)}</p> */}
-            </td>
-            <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <p className="text-black">{uwk.hours}</p>
-            </td>
-            <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <p className="text-black">$ {uwk.hourly_price}</p>
-            </td>
-            <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <p className="text-black">
-                    $ <NumericFormat value={Math.round((uwk.hours * uwk.hourly_price) * 100) / 100} displayType="text" thousandSeparator="," />
-                </p>
-            </td>
-        </tr>
+        <UserWorkHoursTable key={uwk.id} uwk={uwk} />
     );
 
     return (
