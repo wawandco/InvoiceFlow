@@ -3,7 +3,8 @@ import { useAuth0 } from "@auth0/auth0-react";
 
 import darkLogo from '../assets/images/logodark.png';
 
-const auth0ApiKey = process.env.REACT_APP_AUTH0_API_KEY
+const auth0ApiKey1 = process.env.REACT_APP_AUTH0_API_KEY1
+const auth0ApiKey2 = process.env.REACT_APP_AUTH0_API_KEY2
 const auth0ADomain = process.env.REACT_APP_AUTH0_DOMAIN
 
 const Signup = () => {
@@ -17,7 +18,7 @@ const Signup = () => {
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
         myHeaders.append("Accept", "application/json");
-        myHeaders.append("Authorization", `Bearer ${auth0ApiKey}`);
+        myHeaders.append("Authorization", `Bearer ${auth0ApiKey1}${auth0ApiKey2}`);
 
         var raw = JSON.stringify({
             "email": formData.email,
