@@ -1,5 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 import Stripe from "stripe";
+import emailjs from '@emailjs/browser';
 
 import { DataContext } from "../components/DataProvider";
 import Dashboard from "../components/Dashboard";
@@ -80,7 +81,7 @@ export default function UserWorkHours() {
             // expires_at: Math.floor(Date.now() / 1000) + 3200,  // Configured to expire after 30 minutes
         });
 
-        const { error } = await supabase.from('client_payments')
+        const { data, error } = await supabase.from('client_payments')
             .insert({
                 client_id: client.id,
                 user_id: formData.user_id,
@@ -88,11 +89,38 @@ export default function UserWorkHours() {
                 total: Math.round((formData.hours * formData.hourly_price) * 100),
                 session_id: session.id,
                 link: session.url,
-            });
+            }).select().single();
 
         if (error !== null) {
             console.error(`ERROR creating payment: ${error.message}`);
+        } else {
+            notifyUser(client, data)
         }
+    }
+
+    async function notifyUser(client, payment) {
+        const { data: uwh } = await supabase.from("user_work_hours").select().eq('id', payment.user_work_hours_id).single();
+
+        var params = {
+            from_name: "InvoiceFlow Crew",
+            to_email: client.email,
+            to_name: client.name,
+            receiver_user_name: getUserName(payment.user_id),
+            message1: `${uwh.hours} hours of work were invoiced at a price of $ ${uwh.hourly_price} for a total of $ ${payment.total / 100}.`,
+            message2: `To make the payment you can do it from our platform: ${process.env.REACT_APP_BASE_URL}`,
+            message3:`or by clicking the following link: ${payment.link}`,
+        }
+
+        emailjs.send('service_7c1ouhn', 'template_kqngkyt', params, {
+            publicKey: process.env.REACT_APP_EMAILJS_PUBLIC_KEY,
+        }).then(
+            () => {
+                console.log('SUCCESS!');
+            },
+            (error) => {
+                console.log('FAILED...', error);
+            },
+        );
     }
 
     function getUserName(userId) {

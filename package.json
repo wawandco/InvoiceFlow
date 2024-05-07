@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@auth0/auth0-react": "^2.2.4",
+    "@emailjs/browser": "^4.3.3",
     "@stripe/stripe-js": "^3.3.0",
     "@supabase/supabase-js": "^2.42.7",
     "@testing-library/jest-dom": "^5.17.0",

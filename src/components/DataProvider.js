@@ -1,15 +1,19 @@
 import { createContext } from "react"
 import { useEffect, useState } from "react";
+import { useLocation } from 'react-router-dom';
 import { useAuth0 } from "@auth0/auth0-react";
 import Stripe from "stripe";
 import Loading from "./Loading";
 import Login from "./Login";
 import { supabase } from "../lib/supabase";
+import Signup from "../pages/Signup";
 
 export const DataContext = createContext()
 const STRIPE_SECRET_KEY = process.env.REACT_APP_STRIPE_SECRET_KEY
 
 export default function DataProvider({ children }) {
+    const location = useLocation();
+    const { pathname } = location;
     const { user, isAuthenticated, isLoading } = useAuth0();
     const [isSubscribed, setIsSubscribed] = useState(false)
     const [client, setClient] = useState({})
@@ -57,6 +61,7 @@ export default function DataProvider({ children }) {
                     .insert({
                         id: userid,
                         name: user.name,
+                        email: user.email,
                         stripe_customer_id: user.stripe_customer_id,
                     }).select().single();
 
@@ -67,6 +72,10 @@ export default function DataProvider({ children }) {
                 }
             }
         }
+    }
+
+    if (pathname == "/signup") {
+        return <Signup />
     }
 
     if (isLoading) {
