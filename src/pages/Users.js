@@ -11,16 +11,19 @@ export default function Users() {
     const [formData, setFormData] = useState({ full_name: "" })
     const [users, setUsers] = useState([]);
 
-    useEffect(() => {
-        getUsers();
-    }, [client, formData]);
+    const clientId = client?.id
+    const formDataFullName = formData?.full_name === ""
 
-    async function getUsers() {
-        if (client.id !== undefined) {
-            const { data } = await supabase.from("users").select().eq('client_id', client.id);
+    useEffect(() => {
+        async function getUsers() {
+            const { data } = await supabase.from("users").select().eq('client_id', clientId);
             setUsers(data);
         }
-    }
+
+        if (clientId && formDataFullName) {
+            getUsers();
+        }
+    }, [clientId, formDataFullName]);
 
     async function createUser(e) {
         e.preventDefault()
@@ -38,14 +41,10 @@ export default function Users() {
         setFormData({ ...formData, full_name: "" })
     }
 
-    const listUsers = users.map((user) =>
+    const listUsers = users?.map((user) =>
         <tr key={user.id}>
-            {/* <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <p className="text-black">{user.id}</p>
-            </td> */}
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
                 <Link to={("/user/") + user.id} className="text-black font-bold" target="_blank">{user.full_name}</Link>
-                {/* <p className="text-black font-bold">{user.full_name}</p> */}
             </td>
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
                 <p className="text-black">N/A</p>

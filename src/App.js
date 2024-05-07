@@ -3,7 +3,6 @@ import './App.css';
 import { Routes, Route } from 'react-router-dom';
 import { useAuth0 } from "@auth0/auth0-react";
 
-import Home from './pages/Home';
 import Profile from './pages/Profile';
 import Signup from './pages/Signup';
 import Pricing from './pages/Pricing';
@@ -20,7 +19,6 @@ export default function App() {
   return (
     <DataProvider>
       <Routes>
-        {/* <Route path="/" element={<Home/>} /> */}
         <Route path="/users" element={<Users/>} />
         <Route path="/user/:user_id" element={<User/>} />
         <Route path="/work-hours" element={<UserWorkHours customerId={user && user.stripe_customer_id} />} />

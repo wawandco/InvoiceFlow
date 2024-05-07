@@ -1,6 +1,11 @@
 node_modules/
 
+build/
+
 .env
 .env.example
 .env.local
 .env.staging
+
+# Local Netlify folder
+.netlify

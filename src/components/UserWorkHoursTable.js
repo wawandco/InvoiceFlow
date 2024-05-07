@@ -8,13 +8,13 @@ export default function UserWorkHoursTable({ uwk }) {
     const [user, setUser] = useState({});
 
     useEffect(() => {
+        async function getUser() {
+            const { data } = await supabase.from("users").select().eq('id', uwk.user_id).single();
+            setUser(data);
+        }
+
         getUser();
     }, [uwk]);
-
-    async function getUser() {
-        const { data } = await supabase.from("users").select().eq('id', uwk.user_id).single();
-        setUser(data);
-    }
 
     return (
         <>

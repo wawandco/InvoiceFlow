@@ -15,24 +15,26 @@ export default function UserWorkHours() {
     const [users, setUsers] = useState([]);
     const [usersHours, setUsersHours] = useState([]);
 
-    useEffect(() => {
-        getUsers();
-        getUsersWorkHours();
-    }, [client, formData]);
+    const clientId = client?.id
 
-    async function getUsers() {
-        if (client.id !== undefined) {
-            const { data } = await supabase.from("users").select().eq('client_id', client.id);
+    useEffect(() => {
+        async function getUsers() {
+            const { data } = await supabase.from("users").select().eq('client_id', clientId);
             setUsers(data);
         }
-    }
 
-    async function getUsersWorkHours() {
-        if (client.id !== undefined) {
-            const { data } = await supabase.from("user_work_hours").select().eq('client_id', client.id);
+        async function getUsersWorkHours() {
+            const { data } = await supabase.from("user_work_hours").select().eq('client_id', clientId);
             setUsersHours(data);
         }
-    }
+
+        if (clientId) {
+            getUsers();
+            getUsersWorkHours();
+        }
+    }, [clientId, formData]);
+
+
 
     async function createUserWorkHours(e) {
         e.preventDefault()
@@ -108,7 +110,7 @@ export default function UserWorkHours() {
             receiver_user_name: getUserName(payment.user_id),
             message1: `${uwh.hours} hours of work were invoiced at a price of $ ${uwh.hourly_price} for a total of $ ${payment.total / 100}.`,
             message2: `To make the payment you can do it from our platform: ${process.env.REACT_APP_BASE_URL}`,
-            message3:`or by clicking the following link: ${payment.link}`,
+            message3: `or by clicking the following link: ${payment.link}`,
         }
 
         emailjs.send('service_7c1ouhn', 'template_kqngkyt', params, {
@@ -136,7 +138,7 @@ export default function UserWorkHours() {
         return userName
     }
 
-    const listUsers = usersHours.map((uwk) =>
+    const listUsers = usersHours?.map((uwk) =>
         <UserWorkHoursTable key={uwk.id} uwk={uwk} />
     );
 

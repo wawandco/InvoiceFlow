@@ -9,18 +9,25 @@ export default function Payments() {
     const { client } = useContext(DataContext);
     const [payments, setPayments] = useState([]);
 
+    const paymentsLength = payments?.length === 0;
+    const clientID = client?.id
+
     useEffect(() => {
-        getPayments();
-    }, [client]);
+        async function getPayments() {
+            const { data } = await supabase.from("client_payments").select().eq('client_id', clientID);
 
-    async function getPayments() {
-        if (client.id !== undefined) {
-            const { data } = await supabase.from("client_payments").select().eq('client_id', client.id);
-            setPayments(data);
+            if (data?.length > 0) {
+                setPayments(data);
+
+            }
         }
-    }
 
-    const listPayments = payments.map((payment) =>
+        if (clientID && paymentsLength) {
+            getPayments()
+        }
+    }, [clientID, paymentsLength]);
+
+    const listPayments = payments?.map((payment) =>
         <PaymentTable key={payment.id} payment={payment} />
     );
 

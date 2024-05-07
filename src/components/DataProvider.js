@@ -19,14 +19,9 @@ export default function DataProvider({ children }) {
     const [client, setClient] = useState({})
 
     useEffect(() => {
-        getSubscriptionStatus();
-        createClient();
-    }, [user]);
+        async function getSubscriptionStatus() {
+            const stripe = Stripe(STRIPE_SECRET_KEY);
 
-    const getSubscriptionStatus = async () => {
-        const stripe = Stripe(STRIPE_SECRET_KEY);
-
-        if (user !== undefined) {
             const subscriptions = await stripe.subscriptions.list({
                 customer: user.stripe_customer_id,
                 status: "active",
@@ -40,13 +35,11 @@ export default function DataProvider({ children }) {
                 setIsSubscribed(true);
             }
         }
-    }
 
-    const createClient = async () => {
-        if (user !== undefined) {
-            var userid = user.sub.replace("auth0|", "")
+        async function createClient() {
+            var userId = user.sub.replace("auth0|", "")
 
-            const { data, error } = await supabase.from("clients").select().eq('id', userid).single();
+            const { data, error } = await supabase.from("clients").select().eq('id', userId).single();
 
             var err = error && error.details !== "The result contains 0 rows"
             if (err) {
@@ -59,7 +52,7 @@ export default function DataProvider({ children }) {
             if (!err && data === null) {
                 const { data, error } = await supabase.from('clients')
                     .insert({
-                        id: userid,
+                        id: userId,
                         name: user.name,
                         email: user.email,
                         stripe_customer_id: user.stripe_customer_id,
@@ -72,9 +65,14 @@ export default function DataProvider({ children }) {
                 }
             }
         }
-    }
 
-    if (pathname == "/signup") {
+        if (user !== undefined) {
+            getSubscriptionStatus();
+            createClient();
+        }
+    }, [user]);
+
+    if (pathname === "/signup") {
         return <Signup />
     }
 
