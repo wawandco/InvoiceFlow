@@ -12,8 +12,8 @@ const SuccessfulPayment = () => {
                     <p className="text-gray-600 my-2">Thank you for completing your secure online payment.</p>
                     <p> Have a great day!  </p>
                     <div className="py-10 text-center">
-                        <a href="/profile" className="px-12 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3">
-                            GO BACK
+                        <a href="/" className="px-8 bg-[#3D52A0] hover:bg-[#3D52A0]/90 text-white font-bold py-3 rounded-lg">
+                            Go Back
                         </a>
                     </div>
                 </div>

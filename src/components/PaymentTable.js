@@ -27,6 +27,22 @@ export default function PaymentTable({ payment }) {
         getUser();
     }, [payment]);
 
+    let status = session.status
+    switch (session.status) {
+        case "complete":
+            status = "completed"
+            break;
+        case "open":
+            status = "pending"
+            break;
+        case "expired":
+            status = "expired"
+            break;
+        default:
+            status = "N/A"
+            break;
+    }
+
     return (
         <>
             <tr key={payment.id}>
@@ -42,7 +58,7 @@ export default function PaymentTable({ payment }) {
                     <Link to={session.status === "open" ? payment.link : "#"} className={`${session.status !== "open" ? "pointer-events-none bg-gray-600" : "bg-green-600 hover:bg-green-400"} py-2 px-4 rounded-lg text-white font-bold" target="_blank`}>Go Pay</Link>
                 </td>
                 <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                    <span className={`rounded-full px-3 py-1 text-xs font-semibold ${session.status === "open" ? "text-blue-900 bg-blue-200" : ""} ${session.status === "complete" ? "text-green-900 bg-green-200" : ""} ${session.status === "expired" ? "text-gray-900 bg-gray-200" : ""}`}>{session.status}</span>
+                    <span className={`rounded-full px-3 py-1 text-xs font-semibold ${session.status === "open" ? "text-blue-900 bg-blue-200" : ""} ${session.status === "complete" ? "text-green-900 bg-green-200" : ""} ${session.status === "expired" ? "text-gray-900 bg-gray-200" : ""}`}>{status}</span>
                 </td>
             </tr>
         </>

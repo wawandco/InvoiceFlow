@@ -6,7 +6,7 @@ export default function LoginButton() {
 
   return (
     <button 
-      className="text-gray-900 dark:text-white" 
+      className="text-white bg-[#3D52A0] p-2 rounded-lg font-bold" 
       onClick={() => loginWithRedirect()}
     >
       Log In

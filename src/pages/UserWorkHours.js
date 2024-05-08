@@ -146,7 +146,7 @@ export default function UserWorkHours() {
         <>
             <Dashboard activeTab="workHours">
                 <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
-                    <h1 className="font-bold mb-4">Create User</h1>
+                    <h1 className="font-bold mb-4">Create User Work Hours</h1>
 
                     <div id='section2' className="p-4 mt-6 lg:mt-0 rounded shadow bg-white">
                         <form onSubmit={createUserWorkHours} className="flex flex-col">
@@ -195,23 +195,25 @@ export default function UserWorkHours() {
                         </form>
                     </div>
                 </div>
-                <div className="mt-8">
-                    <h1 className="font-bold mb-4">Users</h1>
-                    <table className="w-full">
-                        <thead>
-                            <tr className="bg-[#3d52a0] text-left text-xs font-semibold uppercase tracking-widest text-white">
-                                {/* <th className="px-5 py-3">ID</th> */}
-                                <th className="px-5 py-3">User</th>
-                                <th className="px-5 py-3">Hours</th>
-                                <th className="px-5 py-3">Price</th>
-                                <th className="px-5 py-3">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody className="text-gray-500">
-                            {listUsers}
-                        </tbody>
-                    </table>
-                </div>
+                {listUsers.length > 0 &&
+                    <div className="mt-8">
+                        <h1 className="font-bold mb-4">Users</h1>
+                        <table className="w-full">
+                            <thead>
+                                <tr className="bg-[#3d52a0] text-left text-xs font-semibold uppercase tracking-widest text-white">
+                                    {/* <th className="px-5 py-3">ID</th> */}
+                                    <th className="px-5 py-3">User</th>
+                                    <th className="px-5 py-3">Hours</th>
+                                    <th className="px-5 py-3">Price</th>
+                                    <th className="px-5 py-3">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody className="text-gray-500">
+                                {listUsers}
+                            </tbody>
+                        </table>
+                    </div>
+                }
             </Dashboard>
         </>
     );

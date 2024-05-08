@@ -9,8 +9,8 @@ const auth0ADomain = process.env.REACT_APP_AUTH0_DOMAIN
 
 const Signup = () => {
     const { loginWithRedirect } = useAuth0();
-    const [formData, setFormData] = useState({ fullName: "", email: "", password: "" })
-    const [error, setError] = useState(false)
+    const [formData, setFormData] = useState({ fullName: "", email: "", password: "" });
+    const [error, setError] = useState("");
 
     const handleSubmit = (e) => {
         e.preventDefault()
@@ -49,7 +49,12 @@ const Signup = () => {
                 console.log("result: ", result);
 
                 if (JSON.parse(result).error !== undefined && JSON.parse(result).error !== "") {
-                    setError(true)
+                    let errorMessage = JSON.parse(result).message.toLowerCase();
+                    if (errorMessage.includes(":")) {
+                        errorMessage = errorMessage.split(":")[errorMessage.split(":").length - 1].trim();
+                    }
+
+                    setError(errorMessage)
                 } else {
                     loginWithRedirect();
                 }
@@ -66,8 +71,8 @@ const Signup = () => {
                 <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Register an Account</h2>
             </div>
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm border p-4 rounded bg-gray-50 shadow-md">
-                {error &&
-                    <p className='text-red-600 text-center text-sm mb-3'>Error creating your account, please try again.</p>
+                {error !== "" &&
+                    <p className='text-red-600 text-center text-sm mb-3'>{error}</p>
                 }
                 <form className="space-y-6" action="#" onSubmit={handleSubmit}>
                     <div>
@@ -87,6 +92,35 @@ const Signup = () => {
                         <div className="mt-2">
                             <input id="password" name="password" type="password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} required className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#3D52A0]/80 sm:text-sm sm:leading-6 p-2" />
                         </div>
+                        {error === "password is too weak" &&
+                            <div className="border p-3 mt-2 text-sm rounded bg-gray-100">
+                                <span>Your password must contain:</span>
+                                <ul className="list-disc ml-4 mt-1">
+                                    <li>
+                                        <span>At least 8 characters</span>
+                                    </li>
+                                    <li>
+                                        <span>At least 3 of the following:</span>
+                                        <div>
+                                            <ul className="list-disc ml-4">
+                                                <li className="c9bed79cc c50e54bc3" data-error-code="password-policy-lower-case">
+                                                    <span>Lower case letters (a-z)</span>
+                                                </li>
+                                                <li className="c9bed79cc c50e54bc3" data-error-code="password-policy-upper-case">
+                                                    <span>Upper case letters (A-Z)</span>
+                                                </li>
+                                                <li className="c9bed79cc c50e54bc3" data-error-code="password-policy-numbers">
+                                                    <span>Numbers (0-9)</span>
+                                                </li>
+                                                <li className="c9bed79cc c50e54bc3" data-error-code="password-policy-special-characters">
+                                                    <span>Special characters (e.g. !@#$%^&amp;*)</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
                     </div>
                     <div>
                         <button type="submit" className="flex w-full justify-center rounded-md bg-[#3D52A0] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#3D52A0]/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3D52A0]/80">Sign Up</button>
