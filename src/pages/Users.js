@@ -7,12 +7,19 @@ import Dashboard from "../components/Dashboard";
 import { supabase } from "../lib/supabase"
 
 export default function Users() {
-    const { client } = useContext(DataContext);
+    const { client, productName } = useContext(DataContext);
     const [formData, setFormData] = useState({ full_name: "" })
     const [users, setUsers] = useState([]);
 
     const clientId = client?.id
     const formDataFullName = formData?.full_name === ""
+
+    let maxUser = 2
+    if (productName === "Starter") {
+        maxUser = 10
+    } else if (productName === "Enterprise") {
+        maxUser = 100
+    }
 
     useEffect(() => {
         async function getUsers() {
@@ -61,8 +68,9 @@ export default function Users() {
     return (
         <>
             <Dashboard activeTab="users">
+                <span className="mb-3">Based on the current plan you have, you are allowed to create {maxUser} users</span>
                 <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
-                    <h1 className="font-bold mb-4">Create User</h1>
+                    <h1 className="font-bold mb-4">New User</h1>
 
                     <div id='section2' className="p-4 mt-6 lg:mt-0 rounded shadow bg-white">
                         <form onSubmit={createUser}>
@@ -77,8 +85,8 @@ export default function Users() {
                                 </div>
                             </div>
                             <div className="flex justify-end">
-                                <button className="shadow bg-yellow-700 hover:bg-yellow-500 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="submit">
-                                    Save
+                                <button className={`${listUsers.length === maxUser ? "pointer-events-none bg-gray-600" : "bg-[#3D52A0] hover:bg-[#3D52A0]/90"} shadow focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded`} type="submit">
+                                    Create
                                 </button>
                             </div>
                         </form>
@@ -86,11 +94,10 @@ export default function Users() {
                 </div>
                 {listUsers.length > 0 &&
                     <div className="mt-8">
-                        <h1 className="font-bold mb-4">Users</h1>
+                        <h1 className="font-bold mb-4">Users ({listUsers.length})</h1>
                         <table className="w-full">
                             <thead>
                                 <tr className="bg-[#3d52a0] text-left text-xs font-semibold uppercase tracking-widest text-white">
-                                    {/* <th className="px-5 py-3">ID</th> */}
                                     <th className="px-5 py-3">Full Name</th>
                                     <th className="px-5 py-3">User Role</th>
                                     <th className="px-5 py-3">Created at</th>

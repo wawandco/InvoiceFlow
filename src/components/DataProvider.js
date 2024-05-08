@@ -16,6 +16,7 @@ export default function DataProvider({ children }) {
     const { pathname } = location;
     const { user, isAuthenticated, isLoading } = useAuth0();
     const [isSubscribed, setIsSubscribed] = useState(false)
+    const [productName, setProductName] = useState(false)
     const [client, setClient] = useState({})
 
     useEffect(() => {
@@ -31,7 +32,9 @@ export default function DataProvider({ children }) {
                 // console.log("Customer does not have an active subscription");
                 setIsSubscribed(false);
             } else {
+                const product = await stripe.products.retrieve(subscriptions.data[0].plan.product)
                 // console.log("Customer has an active subscription");
+                setProductName(product.name);
                 setIsSubscribed(true);
             }
         }
@@ -90,6 +93,7 @@ export default function DataProvider({ children }) {
             isAuthenticated: isAuthenticated,
             isLoading: isLoading,
             isSubscribed: isSubscribed,
+            productName: productName,
             client: client,
         }}>
             {children}
