@@ -59,7 +59,7 @@ export default function Header() {
                                 {isAuthenticated &&
                                     <MenuItem className="py-1 px-2">
                                         {/* onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })} */}
-                                        <a onClick={logout} className="block data-[focus]:bg-blue-100">
+                                        <a href="/" onClick={logout} className="block data-[focus]:bg-blue-100">
                                             Sign out
                                         </a>
                                     </MenuItem>

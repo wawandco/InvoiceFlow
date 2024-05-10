@@ -11,19 +11,19 @@ export default function Companies() {
   const [formData, setFormData] = useState({ name: "" })
   const [companies, setCompanies] = useState([]);
 
-  const currentUserID = currentUser?.id
+  const currentUserId = currentUser?.id
   const formDataName = formData?.name === ""
 
   useEffect(() => {
     async function getCompanies() {
-      const { data } = await supabase.from('companies').select('*, admins_companies!inner(admin_id)').eq('admins_companies.admin_id', currentUser.id)
+      const { data } = await supabase.from('companies').select('*, admins_companies!inner(admin_id)').eq('admins_companies.admin_id', currentUserId)
       setCompanies(data);
     }
 
-    if (currentUserID && formDataName) {
+    if (currentUserId && formDataName) {
       getCompanies();
     }
-  }, [currentUserID, formDataName]);
+  }, [currentUserId, formDataName]);
 
   async function createCompany(e) {
     e.preventDefault()
@@ -36,7 +36,7 @@ export default function Companies() {
 
     if (error === null) {
       const { error } = await supabase.from('admins_companies').insert({
-        admin_id: currentUserID,
+        admin_id: currentUserId,
         company_id: company.id
       });
 

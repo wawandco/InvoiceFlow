@@ -35,7 +35,7 @@ export default function RedirectsProvider({ children }) {
         if (currentUser?.id) {
             redirectUsers();
         }
-    }, [currentUser, isSubscribed]);
+    }, [currentUser, isSubscribed, navigate]);
 
     return (
         <RedirectsContext.Provider value={{}}>

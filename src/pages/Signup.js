@@ -8,8 +8,8 @@ const auth0ApiKey2 = process.env.REACT_APP_AUTH0_API_KEY2
 const auth0ADomain = process.env.REACT_APP_AUTH0_DOMAIN
 
 const ADMIN_ID = "rol_aebMkE9rk04Cfccv"
-const CUSTOMER_ID = "rol_Os4ZViR87JCkI3gV"
-const USER_ID = "rol_mp1VdMljMj6jQFvM"
+// const CUSTOMER_ID = "rol_Os4ZViR87JCkI3gV"
+// const USER_ID = "rol_mp1VdMljMj6jQFvM"
 
 const Signup = () => {
     const { loginWithRedirect } = useAuth0();

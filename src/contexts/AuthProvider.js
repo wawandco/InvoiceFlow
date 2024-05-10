@@ -16,8 +16,8 @@ export default function AuthProvider({ children }) {
 
     const [currentUser, setCurrentUser] = useState({})
     const [admin, setAdmin] = useState({})
-    const [customer, setCustomer] = useState({})
-    const [usr, setUser] = useState({})
+    // const [customer, setCustomer] = useState({})
+    // const [usr, setUser] = useState({})
     
     useEffect(() => {
         async function createAdmin() {
@@ -54,21 +54,22 @@ export default function AuthProvider({ children }) {
 
     useEffect(() => {
         const emptyAdmin = Object.keys(admin).length === 0
-        const emptyUser = Object.keys(usr).length === 0
-        const emptyCustomer = Object.keys(customer).length === 0
+        // const emptyUser = Object.keys(usr).length === 0
+        // const emptyCustomer = Object.keys(customer).length === 0
 
         if (!emptyAdmin) {
             setCurrentUser({...admin, role: "Admin"});
         }
 
-        if (!emptyUser) {
-            setCurrentUser({...usr, role: "User"});
-        }
+        // if (!emptyUser) {
+        //     setCurrentUser({...usr, role: "User"});
+        // }
 
-        if (!emptyCustomer) {
-            setCurrentUser({...customer, role: "Customer"});
-        }
-    }, [admin, customer, usr]);
+        // if (!emptyCustomer) {
+        //     setCurrentUser({...customer, role: "Customer"});
+        // }
+    // }, [admin, customer, usr]);
+    }, [admin]);
 
     if (!isLoading && !isAuthenticated && pathname === "/signup") {
         return <Signup />

@@ -87,7 +87,7 @@ export default function UserWorkHours() {
                 session_id: session.id,
                 link: session.url,
             }).select().single();
-
+        console.log({ data });
         if (error !== null) {
             console.error(`ERROR creating payment: ${error.message}`);
         } else {
