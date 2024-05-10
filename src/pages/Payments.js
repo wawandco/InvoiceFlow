@@ -1,21 +1,20 @@
 import { useEffect, useState, useContext } from "react";
+import { Link } from "react-router-dom";
 
-import { DataContext } from "../components/DataProvider";
+import { CompanyContext } from "../contexts/CompanyProvider";
 import Dashboard from "../components/Dashboard";
 import PaymentTable from "../components/PaymentTable";
 import { supabase } from "../lib/supabase";
-import { Link } from "react-router-dom";
 
 export default function Payments() {
-    const { client } = useContext(DataContext);
+    const { companyId } = useContext(CompanyContext);
     const [payments, setPayments] = useState([]);
 
     const paymentsLength = payments?.length === 0;
-    const clientID = client?.id
 
     useEffect(() => {
         async function getPayments() {
-            const { data } = await supabase.from("client_payments").select().eq('client_id', clientID);
+            const { data } = await supabase.from("client_payments").select().eq('company_id', companyId);
 
             if (data?.length > 0) {
                 setPayments(data);
@@ -23,10 +22,10 @@ export default function Payments() {
             }
         }
 
-        if (clientID && paymentsLength) {
+        if (companyId && paymentsLength) {
             getPayments()
         }
-    }, [clientID, paymentsLength]);
+    }, [companyId, paymentsLength]);
 
     const listPayments = payments?.map((payment) =>
         <PaymentTable key={payment.id} payment={payment} />
@@ -34,7 +33,7 @@ export default function Payments() {
 
     return (
         <>
-            <Dashboard activeTab="payments">
+            <Dashboard activeTab="payments" showSidebar={true}>
                 {listPayments.length > 0 ?
                     <>
                         <h1 className="font-bold mb-4">Payments</h1>

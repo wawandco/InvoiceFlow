@@ -1,8 +1,11 @@
+import { useAuth0 } from "@auth0/auth0-react";
+
 import logo from '../assets/images/logo.png';
 import darkLogo from '../assets/images/logodark.png';
-import LoginButton from './LoginButton';
 
 export default function Login() {
+    const { loginWithRedirect } = useAuth0();
+
     return (
         <section className="bg-gray-50 dark:bg-gray-900">
             <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -15,7 +18,9 @@ export default function Login() {
                         <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                             Sign in to your account
                         </h1>
-                        <LoginButton></LoginButton>
+                        <button onClick={() => loginWithRedirect()} className="text-white bg-[#3D52A0] p-2 rounded-lg font-bold">
+                            Log In
+                        </button>
                         <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                             Don't have an account yet?
                             <a href="/signup" className="font-medium text-[#3D52A0] dark:text-white hover:underline dark:text-primary-500 ml-1">

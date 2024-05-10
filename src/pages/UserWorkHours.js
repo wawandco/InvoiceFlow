@@ -1,51 +1,47 @@
 import { useEffect, useState, useContext } from "react";
 import Stripe from "stripe";
-import emailjs from '@emailjs/browser';
+// import emailjs from '@emailjs/browser';
 
-import { DataContext } from "../components/DataProvider";
+import { CompanyContext } from "../contexts/CompanyProvider";
 import Dashboard from "../components/Dashboard";
-import { supabase } from "../lib/supabase";
 import UserWorkHoursTable from "../components/UserWorkHoursTable";
+import { supabase } from "../lib/supabase";
 
 const STRIPE_SECRET_KEY = process.env.REACT_APP_STRIPE_SECRET_KEY
 
 export default function UserWorkHours() {
-    const { client } = useContext(DataContext);
+    const { companyId } = useContext(CompanyContext);
     const [formData, setFormData] = useState({ user_id: "", hours: 0, hourly_price: 0.0 })
     const [users, setUsers] = useState([]);
     const [usersHours, setUsersHours] = useState([]);
 
-    const clientId = client?.id
-
     useEffect(() => {
         async function getUsers() {
-            const { data } = await supabase.from("users").select().eq('client_id', clientId);
+            const { data } = await supabase.from("users").select().eq('company_id', companyId);
             setUsers(data);
         }
 
         async function getUsersWorkHours() {
-            const { data } = await supabase.from("user_work_hours").select().eq('client_id', clientId);
+            const { data } = await supabase.from("user_work_hours").select().eq('company_id', companyId);
             setUsersHours(data);
         }
 
-        if (clientId) {
+        if (companyId) {
             getUsers();
             getUsersWorkHours();
         }
-    }, [clientId, formData]);
-
-
+    }, [companyId, formData]);
 
     async function createUserWorkHours(e) {
         e.preventDefault()
 
         const { data, error } = await supabase.from('user_work_hours')
             .insert({
-                client_id: client.id,
+                company_id: companyId,
                 user_id: formData.user_id,
                 hours: formData.hours,
                 hourly_price: formData.hourly_price,
-                month: 4,
+                month: 5,
                 year: 2024
             }).select().single();
 
@@ -59,11 +55,10 @@ export default function UserWorkHours() {
     }
 
     async function createPaymentLink(formData, userWorkHourId) {
-        // const currentDate = new Date();
         const stripe = Stripe(STRIPE_SECRET_KEY);
 
         const session = await stripe.checkout.sessions.create({
-            customer: client.stripe_customer_id,
+            // customer: client.stripe_customer_id,
             payment_method_types: ['card'],
             line_items: [
                 {
@@ -79,13 +74,13 @@ export default function UserWorkHours() {
             ],
             mode: 'payment',
             success_url: `${window.location.origin}/successful-payment`,
-            cancel_url: `${window.location.origin}/work-hours`,
+            cancel_url: `${window.location.origin}/${companyId}/work-hours`,
             // expires_at: Math.floor(Date.now() / 1000) + 3200,  // Configured to expire after 30 minutes
         });
 
         const { data, error } = await supabase.from('client_payments')
             .insert({
-                client_id: client.id,
+                company_id: companyId,
                 user_id: formData.user_id,
                 user_work_hours_id: userWorkHourId,
                 total: Math.round((formData.hours * formData.hourly_price) * 100),
@@ -96,34 +91,34 @@ export default function UserWorkHours() {
         if (error !== null) {
             console.error(`ERROR creating payment: ${error.message}`);
         } else {
-            notifyUser(client, data)
+            // notifyUser(client, data)
         }
     }
 
-    async function notifyUser(client, payment) {
-        const { data: uwh } = await supabase.from("user_work_hours").select().eq('id', payment.user_work_hours_id).single();
+    // async function notifyUser(client, payment) {
+    //     const { data: uwh } = await supabase.from("user_work_hours").select().eq('id', payment.user_work_hours_id).single();
 
-        var params = {
-            from_name: "InvoiceFlow Crew",
-            to_email: client.email,
-            to_name: client.name,
-            receiver_user_name: getUserName(payment.user_id),
-            message1: `${uwh.hours} hours of work were invoiced at a price of $ ${uwh.hourly_price} for a total of $ ${payment.total / 100}.`,
-            message2: `To make the payment you can do it from our platform: ${process.env.REACT_APP_BASE_URL}`,
-            message3: `or by clicking the following link: ${payment.link}`,
-        }
+    //     var params = {
+    //         from_name: "InvoiceFlow Crew",
+    //         to_email: client.email,
+    //         to_name: client.name,
+    //         receiver_user_name: getUserName(payment.user_id),
+    //         message1: `${uwh.hours} hours of work were invoiced at a price of $ ${uwh.hourly_price} for a total of $ ${payment.total / 100}.`,
+    //         message2: `To make the payment you can do it from our platform: ${process.env.REACT_APP_BASE_URL}`,
+    //         message3: `or by clicking the following link: ${payment.link}`,
+    //     }
 
-        emailjs.send('service_7c1ouhn', 'template_kqngkyt', params, {
-            publicKey: process.env.REACT_APP_EMAILJS_PUBLIC_KEY,
-        }).then(
-            () => {
-                console.log('SUCCESS!');
-            },
-            (error) => {
-                console.log('FAILED...', error);
-            },
-        );
-    }
+    //     emailjs.send('service_7c1ouhn', 'template_kqngkyt', params, {
+    //         publicKey: process.env.REACT_APP_EMAILJS_PUBLIC_KEY,
+    //     }).then(
+    //         () => {
+    //             console.log('SUCCESS!');
+    //         },
+    //         (error) => {
+    //             console.log('FAILED...', error);
+    //         },
+    //     );
+    // }
 
     function getUserName(userId) {
         var userName = "N/A"
@@ -144,7 +139,7 @@ export default function UserWorkHours() {
 
     return (
         <>
-            <Dashboard activeTab="workHours">
+            <Dashboard activeTab="workHours" showSidebar={true}>
                 <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
                     <h1 className="font-bold mb-4">Create User Work Hours</h1>
 
@@ -195,7 +190,7 @@ export default function UserWorkHours() {
                         </form>
                     </div>
                 </div>
-                {listUsers.length > 0 &&
+                {listUsers?.length > 0 &&
                     <div className="mt-8">
                         <h1 className="font-bold mb-4">Users</h1>
                         <table className="w-full">

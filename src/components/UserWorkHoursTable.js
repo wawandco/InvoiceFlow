@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
-import { NumericFormat } from 'react-number-format';
+import { useEffect, useState, useContext } from "react";
 import { Link } from 'react-router-dom';
+import { NumericFormat } from 'react-number-format';
 
+import { CompanyContext } from "../contexts/CompanyProvider";
 import { supabase } from "../lib/supabase";
 
 export default function UserWorkHoursTable({ uwk }) {
+    const { companyId } = useContext(CompanyContext);
     const [user, setUser] = useState({});
 
     useEffect(() => {
@@ -20,7 +22,7 @@ export default function UserWorkHoursTable({ uwk }) {
         <>
             <tr key={uwk.id}>
                 <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                    <Link to={("/user/") + uwk.user_id} className="text-black font-bold" target="_blank">{user.full_name}</Link>
+                    <Link to={("/") + companyId + ("/user/") + uwk.user_id} className="text-black font-bold" target="_blank">{user.full_name}</Link>
                 </td>
                 <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
                     <p className="text-black">{uwk.hours}</p>

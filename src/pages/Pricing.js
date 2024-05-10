@@ -1,22 +1,19 @@
 import { useContext } from "react";
-import  { Navigate } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 
-import { DataContext } from "../components/DataProvider";
-import Dashboard from "../components/Dashboard";
+import { SubscriptionContext } from "../contexts/SubscriptionProvider";
 import PricingTable from "../components/PricingTable";
 
 export default function Pricing() {
-  const { isSubscribed } = useContext(DataContext);
+  const { isSubscribed } = useContext(SubscriptionContext);
 
   if (isSubscribed) {
-    return <Navigate to="/"  />
+    return <Navigate to="/" />
   }
 
   return (
     <>
-      <Dashboard activeTab="pricing">
-          <PricingTable/>
-      </Dashboard>
+      <PricingTable />
     </>
   );
 }

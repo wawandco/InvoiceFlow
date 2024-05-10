@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import { Link } from 'react-router-dom';
 import Stripe from "stripe";
 import { NumericFormat } from 'react-number-format';
-import { Link } from 'react-router-dom';
 
+import { CompanyContext } from "../contexts/CompanyProvider";
 import { supabase } from "../lib/supabase";
 
 const STRIPE_SECRET_KEY = process.env.REACT_APP_STRIPE_SECRET_KEY
 
 export default function PaymentTable({ payment }) {
+    const { companyId } = useContext(CompanyContext);
     const [session, setSession] = useState({});
     const [user, setUser] = useState({});
 
@@ -47,7 +49,7 @@ export default function PaymentTable({ payment }) {
         <>
             <tr key={payment.id}>
                 <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                    <Link to={("/user/") + payment.user_id} className="text-black font-bold" target="_blank">{user.full_name}</Link>
+                    <Link to={("/") + companyId + ("/user/") + payment.user_id} className="text-black font-bold" target="_blank">{user.full_name}</Link>
                 </td>
                 <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
                     <p className="text-black">

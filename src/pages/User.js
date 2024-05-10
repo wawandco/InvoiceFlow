@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { supabase } from "../lib/supabase";
 
 import Dashboard from "../components/Dashboard";
+import { supabase } from "../lib/supabase";
 
 export default function User() {
     const { user_id } = useParams();
@@ -19,7 +19,7 @@ export default function User() {
 
     return (
         <>
-            <Dashboard activeTab="user">
+            <Dashboard activeTab="user" showSidebar={true}>
                 <h1 className="font-bold">{user.full_name}</h1>
             </Dashboard>
         </>

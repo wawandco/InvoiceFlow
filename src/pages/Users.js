@@ -2,16 +2,17 @@ import { useEffect, useState, useContext } from "react";
 import { Link } from 'react-router-dom';
 import Moment from 'moment';
 
-import { DataContext } from "../components/DataProvider";
+import { SubscriptionContext } from "../contexts/SubscriptionProvider";
+import { CompanyContext } from "../contexts/CompanyProvider";
 import Dashboard from "../components/Dashboard";
 import { supabase } from "../lib/supabase"
 
 export default function Users() {
-    const { client, productName } = useContext(DataContext);
+    const { companyId } = useContext(CompanyContext);
+    const { productName } = useContext(SubscriptionContext);
     const [formData, setFormData] = useState({ full_name: "" })
     const [users, setUsers] = useState([]);
 
-    const clientId = client?.id
     const formDataFullName = formData?.full_name === ""
 
     let maxUser = 2
@@ -23,21 +24,21 @@ export default function Users() {
 
     useEffect(() => {
         async function getUsers() {
-            const { data } = await supabase.from("users").select().eq('client_id', clientId);
+            const { data } = await supabase.from("users").select().eq('company_id', companyId);
             setUsers(data);
         }
 
-        if (clientId && formDataFullName) {
+        if (companyId && formDataFullName) {
             getUsers();
         }
-    }, [clientId, formDataFullName]);
+    }, [companyId, formDataFullName]);
 
     async function createUser(e) {
         e.preventDefault()
 
         const { error } = await supabase.from('users')
             .insert({
-                client_id: client.id,
+                company_id: companyId,
                 full_name: formData.full_name
             });
 
@@ -67,7 +68,7 @@ export default function Users() {
 
     return (
         <>
-            <Dashboard activeTab="users">
+            <Dashboard activeTab="users" showSidebar={true}>
                 <span className="mb-3">Based on the current plan you have, you are allowed to create {maxUser} users</span>
                 <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
                     <h1 className="font-bold mb-4">New User</h1>

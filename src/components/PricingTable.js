@@ -1,40 +1,38 @@
 import { useState, useContext } from 'react';
 import Stripe from "stripe";
 import { loadStripe } from "@stripe/stripe-js";
-import { DataContext } from "../components/DataProvider";
+
+import { AuthContext } from "../contexts/AuthProvider";
+import { supabase } from "../lib/supabase";
 
 const STRIPE_SECRET_KEY = process.env.REACT_APP_STRIPE_SECRET_KEY
 const STRIPE_PUBLISHABLE_KEY = process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY
 
 export default function PricingTable() {
-    const { user } = useContext(DataContext);
+    const { currentUser, user } = useContext(AuthContext);
     const [products, setProducts] = useState([])
-    // const [cusSession, setCusSession] = useState({})
-
-    // const createCustomerSession = async () => {
-    //     const stripe = Stripe(STRIPE_SK_KEY);
-
-    //     const customerSession = await stripe.customerSessions.create({
-    //         customer: customerId,
-    //         components: {
-    //             pricing_table: {
-    //                 enabled: true,
-    //             },
-    //         },
-    //     });
-
-    //     if (Object.keys(cusSession).length === 0) {
-    //         setCusSession(customerSession)
-    //     }
-    // }
-    // createCustomerSession();
 
     const handleCheckout = async (priceId) => {
         const stripeSk = Stripe(STRIPE_SECRET_KEY);
         const stripePk = await loadStripe(STRIPE_PUBLISHABLE_KEY);
+        let customerId = currentUser.stripe_customer_id
+
+        if (customerId === "") {
+            const customer = await stripeSk.customers.create({
+                name: user.name,
+                email: user.email,
+            });
+            customerId = customer.id
+
+            const { err } = await supabase.from('admins')
+                .update({ stripe_customer_id: customer.id }).eq('id', currentUser.id)
+            if (err) {
+                console.error(`ERROR updating admin: ${err.message}`);
+            }
+        }
 
         const session = await stripeSk.checkout.sessions.create({
-            customer: user.stripe_customer_id,
+            customer: customerId,
             payment_method_types: ['card'],
             line_items: [
                 { price: priceId, quantity: 1 },
@@ -46,7 +44,7 @@ export default function PricingTable() {
 
         const { error } = await stripePk.redirectToCheckout({ sessionId: session.id })
         if (error) {
-            console.warn("Error: ", error);
+            console.warn("Error redirectToCheckout: ", error);
         }
     }
 
@@ -76,17 +74,9 @@ export default function PricingTable() {
         }
     }
     getPrices();
-    // products.forEach(async (product) => { console.log("Product: ", product)});
 
     return (
         <>
-            {/* <stripe-pricing-table
-                pricing-table-id="prctbl_1P9SxSDuGS5xH1gVv3yCn5NA"
-                publishable-key="pk_test_51P6CocDuGS5xH1gVlXTr0Zyg5yqu5X2bWoH4aTRXGU1VeCTZ078UuFx0eQgYQDlRi7vgR8PE0n6m4AIdvmZjelX200jAwyHr7L"
-                customer-session-client-secret={cusSession.client_secret}
-            >
-            </stripe-pricing-table> */}
-
             <section className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
                 <div className="mx-auto max-w-screen-md text-center mb-8 lg:mb-12">
                     <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900">Choose your Plan</h2>
