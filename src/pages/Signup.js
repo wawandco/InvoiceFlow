@@ -68,12 +68,13 @@ const Signup = () => {
     }
 
     return (
-        <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-            <div className="sm:mx-auto sm:w-full sm:max-w-sm flex flex-col items-center">
-                <img src={darkLogo} className="h-8 me-3" alt="InvoiceFlow Logo" width={150} />
-                <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Register an Account</h2>
-            </div>
-            <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm border p-4 rounded bg-gray-50 shadow-md">
+        <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8 bg-[#e6e6e6] h-screen">
+            <div className="py-10 px-5 sm:mx-auto sm:w-full sm:max-w-sm border rounded bg-white shadow-md">
+                <div className="sm:mx-auto sm:w-full sm:max-w-sm flex flex-col items-center">
+                    <img src={darkLogo} alt="InvoiceFlow Logo" width={300} />
+                    <h2 className="my-5 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Register an Account</h2>
+                </div>
+
                 {error !== "" &&
                     <p className='text-red-600 text-center text-sm mb-3'>{error}</p>
                 }
