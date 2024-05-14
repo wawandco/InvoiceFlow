@@ -15,7 +15,7 @@ const USER_ID = process.env.REACT_APP_AUTH0_USER_ROLE_ID
 
 export default function Users() {
     const { companyId } = useContext(CompanyContext);
-    const { productName, test } = useContext(SubscriptionContext);
+    const { productName } = useContext(SubscriptionContext);
     const [formData, setFormData] = useState({ full_name: "", email: "" })
     const [users, setUsers] = useState([]);
 
