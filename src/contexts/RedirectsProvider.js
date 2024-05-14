@@ -1,5 +1,5 @@
 import { createContext, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import { AuthContext } from "../contexts/AuthProvider";
 import { SubscriptionContext } from "./SubscriptionProvider";
@@ -7,6 +7,9 @@ import { SubscriptionContext } from "./SubscriptionProvider";
 export const RedirectsContext = createContext()
 
 export default function RedirectsProvider({ children }) {
+    const location = useLocation();
+    const { pathname } = location;
+
     const navigate = useNavigate();
     const { currentUser } = useContext(AuthContext);
     const { isSubscribed } = useContext(SubscriptionContext);
@@ -15,10 +18,11 @@ export default function RedirectsProvider({ children }) {
         const redirectUsers = () => {
             switch (currentUser.role) {
                 case "Admin":
+                    if (isSubscribed && (pathname === "/" || pathname === "/pricing")) {
+                        navigate("/companies");
+                    }
                     if (!isSubscribed) {
                         navigate("/pricing");
-                    } else {
-                        navigate("/companies");
                     }
                     break;
                 case "Customer":
@@ -35,7 +39,7 @@ export default function RedirectsProvider({ children }) {
         if (currentUser?.id) {
             redirectUsers();
         }
-    }, [currentUser, isSubscribed, navigate]);
+    }, [currentUser, isSubscribed, navigate, pathname]);
 
     return (
         <RedirectsContext.Provider value={{}}>

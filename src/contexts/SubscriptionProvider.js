@@ -30,7 +30,7 @@ export default function SubscriptionProvider({ children }) {
             }
         }
 
-        if (currentUser?.id) {
+        if (currentUser?.id && currentUser?.stripe_customer_id) {
             getSubscriptionStatus();
         }
     }, [currentUser]);

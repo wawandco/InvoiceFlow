@@ -108,7 +108,7 @@ export default function UserWorkHours() {
     //         message3: `or by clicking the following link: ${payment.link}`,
     //     }
 
-    //     emailjs.send('service_7c1ouhn', 'template_kqngkyt', params, {
+    //     emailjs.send('if_gmail_service', 'if_new_payment', params, {
     //         publicKey: process.env.REACT_APP_EMAILJS_PUBLIC_KEY,
     //     }).then(
     //         () => {

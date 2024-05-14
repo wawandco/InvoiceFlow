@@ -93,7 +93,7 @@ export default function Companies() {
             </form>
           </div>
         </aside>
-        <aside className="w-3/4">
+        <aside className="w-3/4 ml-4">
           <h1 className="font-bold mb-4">Companies ({companies.length})</h1>
           <table className="w-full">
             <thead>
