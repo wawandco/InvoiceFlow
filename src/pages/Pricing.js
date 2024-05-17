@@ -82,7 +82,7 @@ export default function Pricing() {
       {isAuthenticated &&
         <div className='flex items-center justify-end mt-3 mr-4'>
           <a href="/" onClick={logout} className="block data-[focus]:bg-blue-100">
-            Sign out
+            Sign Out
           </a>
         </div>
       }

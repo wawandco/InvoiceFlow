@@ -14,9 +14,9 @@ export default function Login() {
                     </a>
 
                     <div className="flex flex-col items-center px-6 pb-8 space-y-4 md:space-y-6">
-                        <h1 className="text-xl leading-tight tracking-tight text-gray-900 md:text-2xl">
+                        {/* <h1 className="text-xl leading-tight tracking-tight text-gray-900 md:text-2xl">
                             Sign in to your account
-                        </h1>
+                        </h1> */}
                         <button onClick={() => loginWithRedirect()} className="text-white bg-[#3D52A0] py-2 px-12 rounded font-bold">
                             Log In
                         </button>
