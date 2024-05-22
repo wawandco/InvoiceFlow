@@ -7,7 +7,7 @@ import { AuthContext } from "../contexts/AuthProvider";
 
 export default function Welcome() {
     const { logout } = useAuth0();
-    const { currentUser, user, isAuthenticated } = useContext(AuthContext);
+    const { currentUser, isAuthenticated } = useContext(AuthContext);
 
     return (
         <>
