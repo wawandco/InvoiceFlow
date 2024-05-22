@@ -14,6 +14,7 @@ import Users from './pages/Users';
 import Payments from './pages/Payments';
 import User from './pages/User';
 import NotFoundPage from './pages/404';
+import Welcome from './pages/Welcome';
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
         <Route path="/companies" element={<Companies />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/pricing" element={<Pricing />} />
+        <Route path="/welcome" element={<Welcome />} />
 
         <Route element={<CompanyProviderLayout />}>
           <Route path="/:company_id/payments" element={<Payments />} />

@@ -15,29 +15,40 @@ export default function RedirectsProvider({ children }) {
     const { isSubscribed } = useContext(SubscriptionContext);
 
     useEffect(() => {
-        const redirectUsers = () => {
-            switch (currentUser.role) {
-                case "Admin":
-                    if (isSubscribed && (pathname === "/" || pathname === "/pricing")) {
-                        navigate("/companies");
-                    }
-                    if (!isSubscribed) {
-                        navigate("/pricing");
-                    }
-                    break;
-                case "Customer":
-                    console.log("Redirect to the Customer page");
-                    break;
-                case "User":
-                    console.log("Redirect to the User page");
-                    break;
-                default:
-                    break;
-            }
-        }
+        // const redirectUsers = () => {
+        //     switch (currentUser.role) {
+        //         case "Admin":
+        //             if (isSubscribed && (pathname === "/" || pathname === "/pricing" || pathname === "/welcome")) {
+        //                 navigate("/companies");
+        //             }
+        //             if (!isSubscribed) {
+        //                 navigate("/welcome");
+        //             }
+        //             break;
+        //         case "Customer":
+        //             console.log("Redirect to the Customer page");
+        //             break;
+        //         case "User":
+        //             console.log("Redirect to the User page");
+        //             break;
+        //         default:
+        //             break;
+        //     }
+        // }
+
+        // if (currentUser?.id) {
+        //     redirectUsers();
+        // }
+
+        console.log(currentUser?.id);
 
         if (currentUser?.id) {
-            redirectUsers();
+            if (isSubscribed && (pathname === "/" || pathname === "/pricing" || pathname === "/welcome")) {
+                navigate("/companies");
+            }
+            if (!isSubscribed && pathname !== "/pricing") {
+                navigate("/welcome");
+            }
         }
     }, [currentUser, isSubscribed, navigate, pathname]);
 

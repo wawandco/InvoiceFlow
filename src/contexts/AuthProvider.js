@@ -59,6 +59,10 @@ export default function AuthProvider({ children }) {
 
         if (!emptyAdmin) {
             setCurrentUser({...admin, role: "Admin"});
+        } else {
+            if (user?.id) {
+                setCurrentUser({id: user.id, full_name: user.name, email: user.email})
+            }
         }
 
         // if (!emptyUser) {
@@ -69,7 +73,7 @@ export default function AuthProvider({ children }) {
         //     setCurrentUser({...customer, role: "Customer"});
         // }
     // }, [admin, customer, usr]);
-    }, [admin]);
+    }, [admin, user]);
 
     if (!isLoading && !isAuthenticated && pathname === "/signup") {
         return <Signup />
