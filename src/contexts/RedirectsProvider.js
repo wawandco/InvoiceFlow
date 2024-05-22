@@ -40,8 +40,6 @@ export default function RedirectsProvider({ children }) {
         //     redirectUsers();
         // }
 
-        console.log(currentUser?.id);
-
         if (currentUser?.id) {
             if (isSubscribed && (pathname === "/" || pathname === "/pricing" || pathname === "/welcome")) {
                 navigate("/companies");
