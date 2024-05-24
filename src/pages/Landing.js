@@ -9,7 +9,7 @@ const auth0ApiKey1 = process.env.REACT_APP_AUTH0_API_KEY1
 const auth0ApiKey2 = process.env.REACT_APP_AUTH0_API_KEY2
 const auth0ADomain = process.env.REACT_APP_AUTH0_DOMAIN
 
-export default function Welcome() {
+export default function Landing() {
     const { logout } = useAuth0();
     const { currentUser, user, isAuthenticated } = useContext(AuthContext);
     const [permissions, setPermissions] = useState([]);
@@ -76,7 +76,12 @@ export default function Welcome() {
                 <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900">Welcome!</h2>
                 <h2 className="mb-4 text-7xl  text-gray-900">{currentUser.full_name}</h2>
                 <h2 className="mb-4 text-2xl text-gray-900">{currentUser.email}</h2>
-                <Link to="/pricing" className="text-[#3D52A0] p-2 italic rounded">Go to subscribe</Link>
+                {user.role === "Admin" &&
+                    <>
+                        <Link to="/companies" className="text-[#3D52A0] p-2 italic rounded">Companies</Link>
+                        <Link to="/pricing" className="text-[#3D52A0] p-2 italic rounded">Go to subscribe</Link>
+                    </>
+                }
 
                 {permissions.length > 0 &&
                     <>

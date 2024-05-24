@@ -4,7 +4,6 @@ import './App.css';
 
 import DataProviderLayout from './contexts/DataProviderLayout';
 import CompanyProviderLayout from './contexts/CompanyProviderLayout';
-import Home from './pages/Home';
 import Companies from './pages/Companies';
 import Signup from './pages/Signup';
 import Pricing from './pages/Pricing';
@@ -14,27 +13,32 @@ import Users from './pages/Users';
 import Payments from './pages/Payments';
 import User from './pages/User';
 import NotFoundPage from './pages/404';
-import Welcome from './pages/Welcome';
+import Login from './pages/Login';
+import Landing from './pages/Landing';
+import RBACRoutes from './contexts/RBACRoutes';
 
 export default function App() {
   return (
     <Routes>
-      <Route element={<DataProviderLayout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/companies" element={<Companies />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/pricing" element={<Pricing />} />
-        <Route path="/welcome" element={<Welcome />} />
+      <Route element={<RBACRoutes />}>
+        <Route element={<DataProviderLayout />}>
+          <Route path="/" element={<Landing />} />
+          <Route path="/companies" element={<Companies />} />
+          <Route path="/pricing" element={<Pricing />} />
 
-        <Route element={<CompanyProviderLayout />}>
-          <Route path="/:company_id/payments" element={<Payments />} />
-          <Route path="/:company_id/users" element={<Users />} />
-          <Route path="/:company_id/user/:user_id" element={<User />} />
-          <Route path="/:company_id/work-hours" element={<UserWorkHours />} />
+          <Route element={<CompanyProviderLayout />}>
+            <Route path="/:company_id/payments" element={<Payments />} />
+            <Route path="/:company_id/users" element={<Users />} />
+            <Route path="/:company_id/user/:user_id" element={<User />} />
+            <Route path="/:company_id/work-hours" element={<UserWorkHours />} />
+          </Route>
         </Route>
+
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/successful-payment" element={<SuccessfulPayment />} />
       </Route>
 
-      <Route path="/successful-payment" element={<SuccessfulPayment />} />
       <Route path="/404" element={<NotFoundPage />} />
     </Routes>
   );

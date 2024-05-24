@@ -1,23 +1,13 @@
-import { createContext, useEffect, useState } from "react";
-import { useLocation } from 'react-router-dom';
 import { useAuth0 } from "@auth0/auth0-react";
-
-import Signup from "../pages/Signup";
-import Loading from "../components/Loading";
-import Login from "../components/Login";
 import { supabase } from "../lib/supabase";
+import { createContext, useEffect, useState } from "react";;
 
 export const AuthContext = createContext()
 
 export default function AuthProvider({ children }) {
-    const location = useLocation();
-    const { pathname } = location;
     const { user, isAuthenticated, isLoading } = useAuth0();
-
     const [currentUser, setCurrentUser] = useState({})
     const [admin, setAdmin] = useState({})
-    // const [customer, setCustomer] = useState({})
-    // const [usr, setUser] = useState({})
     
     useEffect(() => {
         async function createAdmin() {
@@ -54,8 +44,6 @@ export default function AuthProvider({ children }) {
 
     useEffect(() => {
         const emptyAdmin = Object.keys(admin).length === 0
-        // const emptyUser = Object.keys(usr).length === 0
-        // const emptyCustomer = Object.keys(customer).length === 0
 
         if (!emptyAdmin) {
             setCurrentUser({...admin, role: "Admin"});
@@ -64,35 +52,14 @@ export default function AuthProvider({ children }) {
                 setCurrentUser({id: user.id, full_name: user.name, email: user.email})
             }
         }
-
-        // if (!emptyUser) {
-        //     setCurrentUser({...usr, role: "User"});
-        // }
-
-        // if (!emptyCustomer) {
-        //     setCurrentUser({...customer, role: "Customer"});
-        // }
-    // }, [admin, customer, usr]);
     }, [admin, user]);
-
-    if (!isLoading && !isAuthenticated && pathname === "/signup") {
-        return <Signup />
-    }
-
-    if (isLoading) {
-        return <Loading />
-    }
-
-    if (!isAuthenticated) {
-        return <Login />
-    }
 
     return (
         <AuthContext.Provider value={{
-            isLoading: isLoading,
-            isAuthenticated: isAuthenticated,
-            user: user,
-            currentUser: currentUser,
+            isLoading,
+            isAuthenticated,
+            user,
+            currentUser,
         }}>
             {children}
         </AuthContext.Provider>
