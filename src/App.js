@@ -8,10 +8,10 @@ import Companies from './pages/Companies';
 import Signup from './pages/Signup';
 import Pricing from './pages/Pricing';
 import SuccessfulPayment from './pages/SuccessfulPayment';
+import Customers from './pages/Customers';
+import Customer from './pages/Customer';
 import UserWorkHours from './pages/UserWorkHours';
-import Users from './pages/Users';
 import Payments from './pages/Payments';
-import User from './pages/User';
 import NotFoundPage from './pages/404';
 import Login from './pages/Login';
 import Landing from './pages/Landing';
@@ -28,8 +28,8 @@ export default function App() {
 
           <Route element={<CompanyProviderLayout />}>
             <Route path="/:company_id/payments" element={<Payments />} />
-            <Route path="/:company_id/users" element={<Users />} />
-            <Route path="/:company_id/user/:user_id" element={<User />} />
+            <Route path="/:company_id/customers" element={<Customers />} />
+            <Route path="/:company_id/customers/:customer_id" element={<Customer />} />
             <Route path="/:company_id/work-hours" element={<UserWorkHours />} />
           </Route>
         </Route>

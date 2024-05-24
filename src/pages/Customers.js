@@ -1,8 +1,9 @@
 import { useEffect, useState, useContext } from "react";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Moment from 'moment';
 import emailjs from '@emailjs/browser';
 
+import { AuthContext } from "../contexts/AuthProvider";
 import { SubscriptionContext } from "../contexts/SubscriptionProvider";
 import { CompanyContext } from "../contexts/CompanyProvider";
 import Dashboard from "../components/Dashboard";
@@ -11,70 +12,79 @@ import { supabase } from "../lib/supabase";
 const auth0ApiKey1 = process.env.REACT_APP_AUTH0_API_KEY1
 const auth0ApiKey2 = process.env.REACT_APP_AUTH0_API_KEY2
 const auth0ADomain = process.env.REACT_APP_AUTH0_DOMAIN
-const USER_ID = process.env.REACT_APP_AUTH0_USER_ROLE_ID
+const CUSTOMER_ID = process.env.REACT_APP_AUTH0_CUSTOMER_ROLE_ID
 
-export default function Users() {
-    const { companyId } = useContext(CompanyContext);
+export default function Customers() {
+    const navigate = useNavigate();
+    const { user } = useContext(AuthContext);
     const { productName } = useContext(SubscriptionContext);
+    const { companyId } = useContext(CompanyContext);
     const [formData, setFormData] = useState({ full_name: "", email: "" })
-    const [users, setUsers] = useState([]);
+    const [customers, setCustomers] = useState([]);
 
     const formDataFullName = formData?.full_name === ""
 
-    let maxUser = 2
+    let maxCustomers = 2
     if (productName === "Starter") {
-        maxUser = 10
+        maxCustomers = 10
     } else if (productName === "Enterprise") {
-        maxUser = 100
+        maxCustomers = 100
     }
 
     useEffect(() => {
-        async function getUsers() {
-            const { data } = await supabase.from("users").select().eq('company_id', companyId);
-            setUsers(data);
+        if (user?.id && user?.role !== "Admin") {
+            console.log("pal carajo");
+            navigate("/");
+        }
+    }, [user, navigate]);
+
+    useEffect(() => {
+        async function getCustomers() {
+            const { data } = await supabase.from("customers").select().eq('company_id', companyId);
+            setCustomers(data);
         }
 
         if (companyId && formDataFullName) {
-            getUsers();
+            getCustomers();
         }
     }, [companyId, formDataFullName]);
 
-    async function createUser(e) {
+    async function createCustomers(e) {
         e.preventDefault()
 
-        const { data: user, error } = await supabase.from('users')
+        const { data: customer, error } = await supabase.from('customers')
             .insert({
                 company_id: companyId,
                 full_name: formData.full_name,
                 email: formData.email
             }).select().single();
         if (error) {
-            console.error(`ERROR creating user: ${error.message}`);
+            console.error(`ERROR creating customer: ${error.message}`);
         }
 
-        createAuth0User(user, "Qq123456789!");
-        notifyUser(user, "Qq123456789!");
+        createAuth0User(customer, "Qq123456789!");
+        notifyCustomers(customer, "Qq123456789!");
 
         setFormData({ ...formData, full_name: "", email: "" })
     }
 
-    function createAuth0User(user, password) {
+    function createAuth0User(customer, password) {
         var headers = new Headers();
         headers.append("Content-Type", "application/json");
         headers.append("Accept", "application/json");
         headers.append("Authorization", `Bearer ${auth0ApiKey1}${auth0ApiKey2}`);
 
         var raw = JSON.stringify({
-            "email": user.email,
-            "user_metadata": { "role_id": USER_ID },
+            "email": customer.email,
+            "user_metadata": { "role_id": CUSTOMER_ID },
             "blocked": false,
             "email_verified": false,
             "app_metadata": {},
             "given_name": "string",
             "family_name": "string",
-            "name": user.full_name,
+            "name": customer.full_name,
             "nickname": "string",
-            "user_id": user.id,
+            "user_id": customer.id,
             "connection": "Username-Password-Authentication",
             "password": password,
             "verify_email": false
@@ -99,18 +109,18 @@ export default function Users() {
             });
     }
 
-    async function notifyUser(user, password) {
-        const { data: company } = await supabase.from("companies").select().eq('id', user.company_id).single();
+    async function notifyCustomers(customer, password) {
+        const { data: company } = await supabase.from("companies").select().eq('id', customer.company_id).single();
         const link = process.env.REACT_APP_BASE_URL
 
         var params = {
             from_name: "InvoiceFlow Crew",
-            to_email: user.email,
-            to_name: user.full_name,
+            to_email: customer.email,
+            to_name: customer.full_name,
             company_name: company.name,
-            receiver_user_name: user.full_nam,
+            receiver_user_name: customer.full_nam,
             message1: `You have recently been added to the company ${company.name}, to enter the system, log in by clicking here: ${link}`,
-            message2: `email: ${user.email}`,
+            message2: `email: ${customer.email}`,
             message3: `password. ${password}`,
         }
 
@@ -126,16 +136,16 @@ export default function Users() {
         );
     }
 
-    const listUsers = users?.map((user) =>
-        <tr key={user.id}>
+    const listCustomers = customers?.map((customer) =>
+        <tr key={customer.id}>
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <Link to={("/user/") + user.id} className="text-black font-bold" target="_blank">{user.full_name}</Link>
+                <Link to={("/customer/") + customer.id} className="text-black font-bold" target="_blank">{customer.full_name}</Link>
             </td>
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <p className="text-black">{user.email}</p>
+                <p className="text-black">{customer.email}</p>
             </td>
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <p className="text-black">{Moment(user.created_at).format('MMMM DD, YYYY')}</p>
+                <p className="text-black">{Moment(customer.created_at).format('MMMM DD, YYYY')}</p>
             </td>
             <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
                 <span className="rounded-full bg-green-200 px-3 py-1 text-xs font-semibold text-green-900">N/A</span>
@@ -145,13 +155,13 @@ export default function Users() {
 
     return (
         <>
-            <Dashboard activeTab="users" showSidebar={true}>
-                <span className="mb-3">Based on the current plan you have, you are allowed to create {maxUser} users</span>
+            <Dashboard activeTab="customers" showSidebar={true}>
+                <span className="mb-3">Based on the current plan you have, you are allowed to create {maxCustomers} customers</span>
                 <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
-                    <h1 className="font-bold mb-4">New User</h1>
+                    <h1 className="font-bold mb-4">New Customer</h1>
 
                     <div id='section2' className="p-4 mt-6 lg:mt-0 rounded shadow bg-white">
-                        <form onSubmit={createUser}>
+                        <form onSubmit={createCustomers}>
                             <div className="flex">
                                 <div className="md:flex items-center md:w-1/2 mb-6 mr-4">
                                     <div className="md:w-1/4">
@@ -175,16 +185,16 @@ export default function Users() {
                                 </div>
                             </div>
                             <div className="flex justify-end">
-                                <button className={`${listUsers.length === maxUser ? "pointer-events-none bg-gray-600" : "bg-[#3D52A0] hover:bg-[#3D52A0]/90"} shadow focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded`} type="submit">
+                                <button className={`${listCustomers.length === maxCustomers ? "pointer-events-none bg-gray-600" : "bg-[#3D52A0] hover:bg-[#3D52A0]/90"} shadow focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded`} type="submit">
                                     Create
                                 </button>
                             </div>
                         </form>
                     </div>
                 </div>
-                {listUsers.length > 0 &&
+                {listCustomers.length > 0 &&
                     <div className="mt-8">
-                        <h1 className="font-bold mb-4">Users ({listUsers.length})</h1>
+                        <h1 className="font-bold mb-4">Customers ({listCustomers.length})</h1>
                         <table className="w-full">
                             <thead>
                                 <tr className="bg-[#3d52a0] text-left text-xs font-semibold uppercase tracking-widest text-white">
@@ -195,7 +205,7 @@ export default function Users() {
                                 </tr>
                             </thead>
                             <tbody className="text-gray-500">
-                                {listUsers}
+                                {listCustomers}
                             </tbody>
                         </table>
                     </div>

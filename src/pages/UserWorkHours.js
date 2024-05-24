@@ -1,7 +1,9 @@
 import { useEffect, useState, useContext } from "react";
+import { useNavigate } from 'react-router-dom';
 import Stripe from "stripe";
 // import emailjs from '@emailjs/browser';
 
+import { AuthContext } from "../contexts/AuthProvider";
 import { CompanyContext } from "../contexts/CompanyProvider";
 import Dashboard from "../components/Dashboard";
 import UserWorkHoursTable from "../components/UserWorkHoursTable";
@@ -10,10 +12,19 @@ import { supabase } from "../lib/supabase";
 const STRIPE_SECRET_KEY = process.env.REACT_APP_STRIPE_SECRET_KEY
 
 export default function UserWorkHours() {
+    const navigate = useNavigate();
+    const { user } = useContext(AuthContext);
     const { companyId } = useContext(CompanyContext);
     const [formData, setFormData] = useState({ user_id: "", hours: 0, hourly_price: 0.0 })
     const [users, setUsers] = useState([]);
     const [usersHours, setUsersHours] = useState([]);
+
+    useEffect(() => {
+        if (user?.id && user?.role !== "Admin") {
+            console.log("pal carajo");
+            navigate("/");
+        }
+    }, [user, navigate]);
 
     useEffect(() => {
         async function getUsers() {

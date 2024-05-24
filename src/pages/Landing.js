@@ -76,10 +76,17 @@ export default function Landing() {
                 <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900">Welcome!</h2>
                 <h2 className="mb-4 text-7xl  text-gray-900">{currentUser.full_name}</h2>
                 <h2 className="mb-4 text-2xl text-gray-900">{currentUser.email}</h2>
+
                 {user.role === "Admin" &&
                     <>
                         <Link to="/companies" className="text-[#3D52A0] p-2 italic rounded">Companies</Link>
                         <Link to="/pricing" className="text-[#3D52A0] p-2 italic rounded">Go to subscribe</Link>
+                    </>
+                }
+
+                {user.role === "Customer" &&
+                    <>
+                        <Link to={("/") + currentUser.company_id + ("/payments")} className="text-[#3D52A0] p-2 italic rounded">Payments</Link>
                     </>
                 }
 
