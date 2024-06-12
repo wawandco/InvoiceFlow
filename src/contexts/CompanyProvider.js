@@ -8,26 +8,29 @@ export const CompanyContext = createContext()
 export default function CompanyProvider({ children }) {
     const navigate = useNavigate();
     const { company_id } = useParams();
-    const [company, setSetCompany] = useState({});
+    const [company, setCompany] = useState({});
 
     useEffect(() => {
-        getCompany();
+        async function getCompany() {
+            const { data } = await supabase.from("companies").select().eq('id', company_id).single();
+
+            if (data === null) {
+                navigate("/404");
+            } else {
+                setCompany(data);
+            }
+        }
+
+        if (Object.keys(company).length === 0) {
+            getCompany();
+        }
     });
 
-    async function getCompany() {
-        const { data } = await supabase.from("companies").select().eq('id', company_id).single();
-
-        if (data === null) {
-            navigate("/404");
-        }
-
-        if (data !== null && Object.keys(company).length === 0) {
-            setSetCompany(data);
-        }
-    }
-
     return (
-        <CompanyContext.Provider value={{ companyId: company_id }}>
+        <CompanyContext.Provider value={{
+            companyId: company_id,
+            company: company,
+        }}>
             {children}
         </CompanyContext.Provider>
     )

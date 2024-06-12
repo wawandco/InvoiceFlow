@@ -1,12 +1,14 @@
 import { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
 
+import { AuthContext } from "../contexts/AuthProvider";
 import { CompanyContext } from "../contexts/CompanyProvider";
 import Dashboard from "../components/Dashboard";
 import PaymentTable from "../components/PaymentTable";
 import { supabase } from "../lib/supabase";
 
 export default function Payments() {
+    const { currentUser } = useContext(AuthContext);
     const { companyId } = useContext(CompanyContext);
     const [payments, setPayments] = useState([]);
 
@@ -55,7 +57,10 @@ export default function Payments() {
                     <div className="h-screen flex flex-col items-center justify-center mt-[-88px]">
                         <span className="font-bold text-lg">No payments available yet</span>
                         <span className="mb-3">You must create work hours for a user</span>
-                        <Link to="/work-hours" className="bg-[#3D52A0] p-2 text-white rounded">Add user work hours</Link>
+
+                        {currentUser?.role === "Admin" &&
+                            <Link to="/work-hours" className="bg-[#3D52A0] p-2 text-white rounded">Add user work hours</Link>
+                        }
                     </div>
                 }
             </Dashboard>

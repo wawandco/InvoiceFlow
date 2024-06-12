@@ -1,6 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { supabase } from "../lib/supabase";
-import { createContext, useEffect, useState } from "react";;
+import { createContext, useEffect, useState } from "react";
 
 export const AuthContext = createContext()
 

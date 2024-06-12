@@ -12,11 +12,11 @@ import Header from "./Header";
 
 export default function Dashboard({ activeTab, showSidebar, children }) {
     const { user } = useAuth0();
-    const { companyId } = useContext(CompanyContext);
+    const { companyId, company } = useContext(CompanyContext);
 
     return (
         <>
-            <Header />
+            <Header companyName={company.name} />
             {showSidebar ?
                 <>
                     <aside id="logo-sidebar" className="fixed top-0 left-0 z-40 w-64 h-screen pt-16 transition-transform -translate-x-full border-r sm:translate-x-0 dark:bg-[#3D52A0]" aria-label="Sidebar">

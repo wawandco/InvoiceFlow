@@ -10,7 +10,7 @@ import { SubscriptionContext } from "../contexts/SubscriptionProvider";
 
 const STRIPE_SECRET_KEY = process.env.REACT_APP_STRIPE_SECRET_KEY
 
-export default function Header() {
+export default function Header({ companyName }) {
     const { logout } = useAuth0();
     const { user, currentUser, isAuthenticated } = useContext(AuthContext);
     const { isSubscribed, productName } = useContext(SubscriptionContext);
@@ -34,7 +34,7 @@ export default function Header() {
                             <a href="/" className="flex items-center ms-2 md:me-24">
                                 <img src={logo} className="h-8 me-3 hidden dark:inline" alt="InvoiceFlow Logo" />
                                 <img src={darkLogo} className="h-8 me-3 inline dark:hidden" alt="InvoiceFlow Logo" />
-                                {/* <h1 className="font-bold dark:text-white"> - {client.name}'s Company</h1> */}
+                                { companyName && <h1 className="font-bold text-2xl dark:text-white"> - {companyName}</h1> }
                             </a>
                         </div>
                         <Menu>
