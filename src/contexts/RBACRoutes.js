@@ -42,11 +42,12 @@ export default function RBACRoutes() {
                 setCustomer(data);
             }
         }
-
         getCustomer(user.id)
 
         if (customer?.company_id) {
             return <Navigate to={("/") + customer?.company_id + ("/payments")} />
+        } else {
+            return <Loading />
         }
     }
 

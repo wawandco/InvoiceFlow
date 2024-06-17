@@ -54,7 +54,6 @@ export default function Landing() {
         <p key={permission.permission_name} className='text-black font-bold bg-gray-300 py-1 px-3 rounded-lg my-1'>{permission.permission_name}</p>
     );
 
-
     return (
         <>
             <div className="flex items-center justify-between m-3">
